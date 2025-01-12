@@ -4,6 +4,8 @@ import { HomeComponent } from './main/pages/home/home.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'auth', loadChildren: () => import('./core/auth/auth.module').then(m => m.AuthModule) },
+  { path: '', redirectTo: '/auth/login', pathMatch: 'full' }
 ];
 
 @NgModule({
