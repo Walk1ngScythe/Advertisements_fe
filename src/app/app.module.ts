@@ -7,6 +7,7 @@ import { HomeComponent } from './main/pages/home/home.component';
 import { FormAdvComponent } from './main/components/form-adv/form-adv.component';
 import { AuthModule } from './core/auth/auth.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DropdownMenuHeaderComponent } from './main/components/dropdown-menu-header/dropdown-menu-header.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     HeaderComponent,
     HomeComponent,
     FormAdvComponent,
+    DropdownMenuHeaderComponent,
   ],
   imports: [
     BrowserModule,

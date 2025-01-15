@@ -1,53 +1,77 @@
 import { Injectable } from '@angular/core';
 import ky from 'ky';
 import { environment } from '../../../enviroment/enviroment';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+  private loginIn = new BehaviorSubject<boolean>(false);
+  private currentUser = new BehaviorSubject<any | null>(null);
+
+  get loginIn$() {
+    return this.loginIn.asObservable();
+  }
+
+  get currentUser$() {
+    return this.currentUser.asObservable();
+  }
+  
   private api = ky.create({
     prefixUrl: environment.apiUrl,
-    hooks: {
-      beforeRequest: [
-        (request) => {
-          const csrfToken = getCookie('csrftoken'); // Получаем CSRF-токен из куков
-          if (csrfToken) {
-            request.headers.set('X-CSRFToken', csrfToken); // Устанавливаем заголовок с токеном
-          }
-        },
-      ],
-    },
   });
+
   constructor() { }
-  login (phone_number: number, password: string) {
-    return this.api.post('auth/login/', {
-      json: {
-        phone_number,
-        password
-      },
+
+  login(phone_number: number, password: string) {
+    return this.api.post('token', {
+      json: { phone_number, password },
       credentials: 'include'
     }).json()
-    .then(async(data: any) => 
-      {
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      .then(async (data: any) => {
+        if (data.access) {
+          // Сохраняем токен в localStorage
+          localStorage.setItem('token', data.access);
+          this.loginIn.next(true);
+
+          // Загружаем профиль пользователя
+          await this.loadUserProfile();
+        }
+        return data;
+      });
+  }
+
+  private async loadUserProfile() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const userProfile: any = await this.api.get('users/profile/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }).json();
+
+        if (userProfile) {
+          // Сохраняем весь объект профиля в localStorage
+          localStorage.setItem('userProfile', JSON.stringify(userProfile));
+          this.currentUser.next(userProfile);
+        }
+      } catch (error) {
+        console.error('Failed to load user profile:', error);
       }
-      return data;
     }
-  );
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userProfile');
+    this.loginIn.next(false);
+    this.currentUser.next(null);
   }
 }
 
-  function getCookie(name: string) {
-    const cookieValue = `; ${document.cookie}`;
-    const parts = cookieValue.split(`; ${name}=`);
-    if (parts.length === 2) {
-      // @ts-ignore
-      return parts.pop().split(';').shift();
-    }
-  }
-  
 
 
   

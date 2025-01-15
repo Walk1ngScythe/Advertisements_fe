@@ -6,7 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']  // Исправление здесь
+  styleUrls: ['./login.component.css'],  // Исправление здесь
+  standalone: false
 })
 export class LoginComponent implements OnInit {
 
@@ -21,8 +22,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],  // Use a regex for phone validation
-      password: ['', [Validators.required, Validators.minLength(6)]], // Add validation for password length
-      rememberMe: [false]  // This will bind to the checkbox
+      password: ['', [Validators.required, Validators.minLength(2)]], // Add validation for password length
+      
     });
   }
 
