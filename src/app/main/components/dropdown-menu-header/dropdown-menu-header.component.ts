@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-dropdown-menu-header',
@@ -15,20 +16,30 @@ export class DropdownMenuHeaderComponent implements OnInit {
   hearts: (boolean | 'partial')[] = []; // Массив для отображения заполненных сердечек
   filledHearts: number | undefined; // Количество полноценных сердечек
   partialHeart: number | undefined; // Дробная часть сердечка
+  canShowButton = false;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
     this.isloggedIn$ = this.authService.loginIn$;
     this.currentUser$ = this.authService.currentUser$;
+
+    this.currentUser$.subscribe(() => {
+      setTimeout(() => {
+          this.cdr.detectChanges();
+          console.log(this.currentUser$);
+      });
+    });
+    
   }
 
   ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => console.log(user));
     // Получаем текущего пользователя и обновляем рейтинг, если он есть
-    this.currentUser$.subscribe(user => {
-      if (user && user.rating !== undefined) {
-        this.currentRating = user.rating;
-        this.updateHearts(this.currentRating);
-      }
-    });
+    // this.currentUser$.subscribe(user => {
+      // if (user && user.rating !== undefined) {
+       // this.currentRating = user.rating;
+       // this.updateHearts(this.currentRating);
+      //}
+    //});
   }
 
   updateHearts(rating: number) {
@@ -53,7 +64,7 @@ export class DropdownMenuHeaderComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout(); // Реализуйте логику выхода в AuthService
+    this.authService.logout(); // логика выхода в AuthService
     this.isDropdownOpen = false;
   }
 }

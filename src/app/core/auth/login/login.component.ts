@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.fb.group({
       phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],  // Use a regex for phone validation
       password: ['', [Validators.required, Validators.minLength(2)]], // Add validation for password length
-      
     });
   }
 

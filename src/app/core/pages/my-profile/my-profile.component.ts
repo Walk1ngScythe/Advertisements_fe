@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
   standalone: false,
   
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  templateUrl: './my-profile.component.html',
+  styleUrl: './my-profile.component.css'
 })
-export class ProfileComponent {
+export class MyProfileComponent {
 
       currentUser$;  
       constructor(private authService: AuthService) {
         this.currentUser$ = this.authService.currentUser$;
+        
       }
+      
 }

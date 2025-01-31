@@ -4,36 +4,43 @@
 <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-6">
   <div class="flex items-center space-x-4">
     <!-- Avatar Section -->
-    <img [src]="(currentUser$ | async)?.avatar" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
+    <img [src]="(currentUser$ | async)?.[0]?.avatar" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
     
     <!-- User Info Section -->
     <div>
       <!-- Name -->
       <h1 class="text-2xl font-semibold">
-        {{ (currentUser$ | async)?.first_name }} {{ (currentUser$ | async)?.last_name }}
+        {{ (currentUser$ | async)?.[0]?.first_name }} {{ (currentUser$ | async)?.[0]?.last_name }}
       </h1>
       
       <!-- Email -->
       <p class="text-gray-500">
-        <strong>Почта:</strong> {{ (currentUser$ | async)?.email }}
+        <strong>Почта:</strong> {{ (currentUser$ | async)?.[0]?.email }}
+      </p>
+      
+      <!-- Company -->
+      <p class="text-gray-500">
+        <strong>Компания:</strong> {{ (currentUser$ | async)?.[0]?.company?.name }}
       </p>
       
       <!-- Phone Number -->
       <p class="text-gray-500">
-        <strong>Телефон:</strong> {{ (currentUser$ | async)?.phone_number }}
+        <strong>Телефон:</strong> {{ (currentUser$ | async)?.[0]?.phone_number }}
       </p>
       
       <!-- Registration Date -->
       <p class="text-gray-500">
-        <strong>Зарегестрирован:</strong> {{ (currentUser$ | async)?.registration_date | date:'longDate' }}
+        <strong>Зарегестрирован:</strong> {{ (currentUser$ | async)?.[0]?.registration_date | date:'longDate' }}
       </p>
       
       <!-- Rating -->
       <p class="text-yellow-500">
-        <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.rating }} ★
+        <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.[0]?.rating }} ★
       </p>
+
     </div>
   </div>
+
 
   <!-- Buttons -->
   <div class="mt-6 flex space-x-4">
