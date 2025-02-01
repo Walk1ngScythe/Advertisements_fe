@@ -1,0 +1,60 @@
+<!-- Кнопки -->
+<div class="flex items-center space-x-4">
+    <!-- Если пользователь не авторизован -->
+    <div *ngIf="!(isloggedIn$ | async)">
+        <a routerLink="/auth/login" class="text-blue-600 hover:underline font-medium">Войти</a>
+    </div>
+
+    <!-- Если пользователь авторизован -->
+    <div *ngIf="isloggedIn$ | async" class="relative">
+        <!-- Главное меню -->
+        <div class="flex items-center space-x-4 cursor-pointer" (click)="toggleDropdown()">
+            <!-- Аватар -->
+            <img 
+                [src]="(currentUser$ | async)?.[0]?.avatar" 
+                alt="Avatar" 
+                class="h-10 w-10 rounded-full border-2 border-blue-500 shadow-lg" />
+
+    
+            <!-- Имя и фамилия -->
+            <div>
+                <div *ngIf="(currentUser$ | async) as users">
+                    <span class="font-medium text-white">{{ users[0]?.first_name }} {{ users[0]?.last_name }}</span>
+                </div>
+            </div>
+
+        </div>
+    
+        <!-- Выпадающее меню -->
+        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+            <p class="text-yellow-500">
+                <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.[0]?.rating }} ★
+              </p>
+
+            <!-- Дополнительные кнопки -->
+            <div class="px-4 py-2">
+                <button routerLink="/my_profile"
+                    class="block w-full text-left text-sm text-gray-700 py-2 hover:bg-gray-100 rounded-lg">
+                    Мой профиль
+                </button>
+                <button 
+                    class="block w-full text-left text-sm text-gray-700 py-2 hover:bg-gray-100 rounded-lg">
+                    Мои объявления
+                </button>
+            </div>
+
+            <!-- Кнопка выхода -->
+            <div class="px-4 py-2 border-t border-gray-200">
+                <button 
+                    class="block w-full text-left text-sm text-red-600 py-2 hover:bg-red-100 rounded-lg"
+                    (click)="logout()">
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </div>
+        <!-- Разместить объявление -->
+        <a *ngIf="canShowButton" href="#" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
+            Разместить объявление
+        </a>
+</div>
