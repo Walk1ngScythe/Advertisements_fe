@@ -1,81 +1,74 @@
-<app-header></app-header>
 
-<!-- User Profile Container -->
-<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-6">
-  <div class="flex items-center space-x-4">
-    <!-- Avatar Section -->
-    <img [src]="(currentUser$ | async)?.[0]?.avatar" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
-    
-    <!-- User Info Section -->
-    <div>
-      <!-- Name -->
-      <h1 class="text-2xl font-semibold">
-        {{ (currentUser$ | async)?.[0]?.first_name }} {{ (currentUser$ | async)?.[0]?.last_name }}
-      </h1>
+<main class="min-h-screen bg-gray-800 text-gray-600 ">
+  <app-header></app-header>
+  <!-- User Profile Container -->
+  <div class="max-w-4xl mx-auto p-6 bg-gray-600 shadow-md rounded-lg mt-6">
+    <div class="flex items-center space-x-4">
+      <!-- Avatar Section -->
+      <img [src]="(currentUser$ | async)?.[0]?.avatar" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
       
-      <!-- Email -->
-      <p class="text-gray-500">
-        <strong>Почта:</strong> {{ (currentUser$ | async)?.[0]?.email }}
-      </p>
-      
-      <!-- Company -->
-      <p class="text-gray-500">
-        <strong>Компания:</strong> {{ (currentUser$ | async)?.[0]?.company?.name }}
-      </p>
-      
-      <!-- Phone Number -->
-      <p class="text-gray-500">
-        <strong>Телефон:</strong> {{ (currentUser$ | async)?.[0]?.phone_number }}
-      </p>
-      
-      <!-- Registration Date -->
-      <p class="text-gray-500">
-        <strong>Зарегестрирован:</strong> {{ (currentUser$ | async)?.[0]?.registration_date | date:'longDate' }}
-      </p>
-      
-      <!-- Rating -->
-      <p class="text-yellow-500">
-        <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.[0]?.rating }} ★
-      </p>
+      <!-- User Info Section -->
+      <div>
+        <!-- Name -->
+        <h1 class="text-white text-2xl font-semibold">
+          {{ (currentUser$ | async)?.[0]?.first_name }} {{ (currentUser$ | async)?.[0]?.last_name }}
+        </h1>
+        
+        <!-- Email -->
+        <p class="text-white">
+          <strong>Почта:</strong> {{ (currentUser$ | async)?.[0]?.email }}
+        </p>
+        
+        <!-- Company -->
+        <p class="text-white">
+          <strong>Компания:</strong> {{ (currentUser$ | async)?.[0]?.company?.name }}
+        </p>
+        
+        <!-- Phone Number -->
+        <p class="text-white">
+          <strong>Телефон:</strong> {{ (currentUser$ | async)?.[0]?.phone_number }}
+        </p>
+        
+        <!-- Registration Date -->
+        <p class="text-white">
+          <strong>Зарегестрирован:</strong> {{ (currentUser$ | async)?.[0]?.registration_date | date:'longDate' }}
+        </p>
+        
+        <!-- Rating -->
+        <p class="text-yellow-500">
+          <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.[0]?.rating }} ★
+        </p>
 
+      </div>
+    </div>
+
+
+    <!-- Buttons -->
+    <div class="mt-6 flex space-x-4">
+      <!-- Edit Profile Button -->
+      <button class="w-full md:w-auto py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+        Редактировать профиль
+      </button>
+      
+      <!-- Delete Account Button -->
+      <button class="w-full md:w-auto py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600">
+        Удалить аккаунт
+      </button>
     </div>
   </div>
 
+  <!-- User Ads Section -->
+  <div class="max-w-4xl mx-auto p-6 mt-8 bg-gray-600 shadow-lg rounded-lg">
+    <h2 class="text-white text-xl font-semibold mb-4">Ваши объявления</h2>
 
-  <!-- Buttons -->
-  <div class="mt-6 flex space-x-4">
-    <!-- Edit Profile Button -->
-    <button class="w-full md:w-auto py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-      Редактировать профиль
-    </button>
-    
-    <!-- Delete Account Button -->
-    <button class="w-full md:w-auto py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600">
-      Удалить аккаунт
-    </button>
+    <!-- Example Ad Card (this can be dynamically generated with *ngFor) -->
+    <div class="border-b border-gray-300 pb-4 mb-4">
+      <h3 class="text-white text-lg font-semibold">Название объявления</h3>
+      <p class="text-gray-200">Описание объявления...</p>
+      <button class="mt-2 py-1 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+        Подробнее
+      </button>
+    </div>
+
   </div>
-</div>
-
-<!-- User Ads Section -->
-<div class="max-w-4xl mx-auto p-6 mt-8 bg-white shadow-lg rounded-lg">
-  <h2 class="text-xl font-semibold mb-4">Ваши объявления</h2>
-
-  <!-- Example Ad Card (this can be dynamically generated with *ngFor) -->
-  <div class="border-b border-gray-300 pb-4 mb-4">
-    <h3 class="text-lg font-semibold">Название объявления</h3>
-    <p class="text-gray-500">Описание объявления...</p>
-    <button class="mt-2 py-1 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-      Подробнее
-    </button>
-  </div>
-
-  <div class="border-b border-gray-300 pb-4 mb-4">
-    <h3 class="text-lg font-semibold">Название объявления</h3>
-    <p class="text-gray-500">Описание объявления...</p>
-    <button class="mt-2 py-1 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-      Подробнее
-    </button>
-  </div>
-
-  <!-- Add more ads here or dynamically generate them with *ngFor -->
-</div>
+</main>

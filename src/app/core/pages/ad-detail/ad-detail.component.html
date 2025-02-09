@@ -1,0 +1,131 @@
+<main class="min-h-screen bg-gray-800 text-white">
+    <app-header></app-header>
+
+    <div class="flex justify-center mt-8">
+        <section class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-5xl w-full">
+            
+            <!-- Заголовок и цена -->
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold">{{ ad?.title }}</h1>
+                <div class="flex justify-end items-center space-x-4">
+                    <h2 class="text-2xl text-blue-400 font-bold">{{ ad?.price }} ₽</h2>
+                    <button 
+                        class="text-white-900 hover:text-red-600 transition-all text-3xl"
+                        [class.text-red-600]="isFavorite"
+                        (click)="toggleFavorite()">
+                        <i class="fa-solid" *ngIf="isFavorite">&#9829;</i>  <!-- Заполненное сердце -->
+                        <i class="fa-regular" *ngIf="!isFavorite">&#9829;</i> <!-- Пустое сердце -->
+                    </button>
+                </div>
+                
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 mt-6">
+                
+                <!-- Левая часть: Фото объявления -->
+                <div class="w-full lg:w-2/3">
+                    <swiper-container
+                        [navigation]="true"
+                        [pagination]="{ clickable: true }"
+                        [autoplay]="{ delay: 3000 }"
+                        class="rounded-lg"
+                    >
+                        <!-- Кнопки навигации -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+
+                        <!-- Первый слайд: основное изображение -->
+                        <swiper-slide>
+                            <img [src]="ad?.main_image" alt="{{ ad?.title }}" class="w-full h-96 object-cover rounded-lg">
+                        </swiper-slide>
+
+                        <!-- Остальные слайды: дополнительные изображения -->
+                        <swiper-slide *ngFor="let img of ad?.images">
+                            <img [src]="img.image" alt="Фото" class="w-full h-96 object-cover rounded-lg">
+                        </swiper-slide>
+                    </swiper-container>
+                </div>
+
+                <!-- Правая часть: Цена, избранное, продавец -->
+                <div class="w-full lg:w-1/3">
+                    <!-- Кнопки "Избранное" -->
+                    <div class="flex justify-between items-center mb-4">
+                        <button class="text-gray-500 hover:text-red-600 transition-all text-2xl"
+                                [class.text-red-600]="isFavorite"
+                                (click)="toggleFavorite()">
+                          <i class="fa-solid fa-heart" *ngIf="isFavorite"></i>
+                          <i class="fa-regular fa-heart" *ngIf="!isFavorite"></i>
+                        </button>
+                      </div>
+
+                    <!-- Блок информации о продавце (в стиле Авито) -->
+                    <div class="bg-gray-800 p-4 rounded-lg shadow-md text-center">
+                        <img [src]="ad?.author.avatar" alt="Аватар" 
+                             class="w-24 h-24 object-cover rounded-full border-4 border-blue-500 mx-auto">
+                        
+                        <h2 class="text-xl font-semibold mt-3 text-white">{{ ad?.author.first_name }} {{ ad?.author.last_name }}</h2>
+                        <p class="text-sm text-gray-400">{{ ad?.author.company.name }}</p>
+                        <p class="text-lg text-yellow-400 font-bold mt-2">★ {{ ad?.author.rating }}</p>
+
+                        <!-- Кнопки "Показать телефон" и "Написать" -->
+                        <button class="bg-green-600 text-white w-full py-2 mt-3 rounded-lg hover:bg-green-700 transition-all"
+                                (click)="showPhone()">
+                            {{ phoneVisible ? ad?.author.phone_number : 'Показать телефон' }}
+                        </button>
+                        <!-- (click)="openChat()" -->
+                        <button class="bg-blue-500 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all"
+                                >
+                            Написать
+                        </button>
+                        <button class="bg-red-600 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all">
+                            <i class="fa-solid fa-exclamation-circle mr-2"></i> Пожаловаться
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Описание объявления -->
+            <div class="mt-6">
+                <h2 class="text-3xl font-bold mb-2">Описание</h2>
+                <p class="text-gray-300 mb-4">{{ ad?.content }}</p>
+                
+                <h2 class="text-3xl font-bold mb-2">Категория</h2>
+                <p class="text-gray-300 mb-4 cursor-pointer" (click)="onRubricClick(ad?.rubric.name)">
+                    {{ ad?.rubric.name }}
+                </p>
+            </div>
+            <div class="flex items-center space-x-6 text-sm text-white-600 mb-4">
+                <p>ID: {{ ad?.id }}</p>
+                <p>Размещено: {{ ad?.published | date:'longDate' }}</p>
+                <p>Просмотров: {{ ad?.views }}</p>         
+            </div>
+            
+            
+            
+
+            <!-- Отзывы о продавце -->
+            <div class="mt-6">
+                <h2 class="text-2xl font-bold mb-4">Отзывы о продавце</h2>
+                <div *ngFor="let review of reviews" class="bg-gray-600 p-4 rounded-lg mb-2">
+                    <p class="text-yellow-400 font-semibold">★ {{ review.rating }}</p>
+                    <p class="text-gray-300">{{ review.comment }}</p>
+                    <p class="text-sm text-gray-400">— {{ review.author }}</p>
+                </div>
+            </div>
+
+            <!-- Похожие объявления -->
+            <div class="mt-6">
+                <h2 class="text-2xl font-bold mb-4">Похожие объявления</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div *ngFor="let similarAd of similarAds" class="bg-gray-600 p-4 rounded-lg">
+                        <img [src]="similarAd.main_image" alt="" class="w-full h-32 object-cover rounded-md">
+                        <h3 class="text-lg font-semibold mt-2">{{ similarAd.title }}</h3>
+                        <p class="text-blue-400">{{ similarAd.price }} ₽</p>
+                        <button class="text-blue-500 mt-2">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+    </div>
+</main>

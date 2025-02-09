@@ -1,4 +1,4 @@
-<main class="min-h-screen bg-gray-900 text-white flex">
+<main class="min-h-screen bg-gray-800 text-white flex">
     <!-- Боковое меню -->
     <aside [class.hidden]="!isMenuVisible" class="w-64 p-4 bg-gray-800 transition-all ease-in-out duration-300 fixed left-0 top-0 h-full">
       <button (click)="toggleMenu()" class="text-white bg-blue-600 p-2 rounded-md mb-4">Закрыть меню</button>
@@ -26,7 +26,7 @@
         <h1 class="text-3xl font-bold text-center mb-8">Объявления</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <div *ngFor="let data of adv" 
-                class="bg-gray-800 border border-gray-700 rounded-lg shadow-sm hover:shadow-2xl hover:scale-105 transform transition-all ease-in-out duration-300 overflow-hidden"
+                class="bg-gray-700 border border-gray-700 rounded-lg shadow-sm hover:shadow-2xl hover:scale-105 transform transition-all ease-in-out duration-300 overflow-hidden"
                 (click)="goToDetailPage(data.id)">
                 
                 <!-- Изображение с фиксированным размером -->

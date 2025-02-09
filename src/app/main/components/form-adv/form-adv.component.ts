@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-adv',
@@ -12,10 +13,10 @@ export class FormAdvComponent implements OnInit {
   isMenuVisible = false; // Состояние отображения бокового меню
   isDropdownVisible = false; // Состояние отображения выпадающего меню категорий
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getAdv();
+    this.getAdv(); 
   }
 
   getAdv() {
@@ -33,7 +34,7 @@ export class FormAdvComponent implements OnInit {
   }
 
   goToDetailPage(id: number): void {
-    // Логика перехода на страницу с подробным описанием объявления
+      this.router.navigate(['/ad-detail', id]); 
     console.log(`Перехожу на страницу с ID: ${id}`);
   }
 }

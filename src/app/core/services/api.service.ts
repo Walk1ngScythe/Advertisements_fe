@@ -16,4 +16,13 @@ export class ApiService {
   async getAdvertisements(): Promise<any> {
     return await this.client.get('bbs/').json();
   } 
+  getAdvertisementById(id: string): Promise<any> {
+    return this.client.get(`bbs/${id}`).json();
+  }
+  getSimilarAds(adId: string): Promise<any[]> {
+    return this.client.get<any[]>(`bbs/${adId}/similar`).json();
+  }
+  getReviews(adId: string): Promise<any[]> {
+    return this.client.get<any[]>(`/api/ads/${adId}/reviews`).json();
+  }
 }

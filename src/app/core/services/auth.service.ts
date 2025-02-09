@@ -81,6 +81,7 @@ export class AuthService {
   }
 
   logout() {
+    window.location.reload(); // Перезагрузка страницы после выхода
     // Очистка данных из localStorage
     localStorage.removeItem('userProfile');
     
@@ -90,7 +91,7 @@ export class AuthService {
         if (response.ok) {
           this.loginIn.next(false);
           this.currentUser.next(null);
-          console.log('Successfully logged out');
+          console.log('Successfully logged out');     
         } else {
           console.error('Failed to log out');
         }
