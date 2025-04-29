@@ -27,6 +27,7 @@ export class ApiService {
     return this.client.get<any[]>(`users/profile/${id}/`).json();
   }
   async getAdvertisements(authorId?: number): Promise<any> {
+    
     let url = 'bbs/';  // URL для получения всех объявлений
     if (authorId) {
       url += `?author=${authorId}`; 

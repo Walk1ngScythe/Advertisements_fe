@@ -15,11 +15,15 @@ export class FormAdvComponent implements OnInit {
   isDropdownVisible = false; // Состояние отображения выпадающего меню категорий
   
   @Input() isUserProfile: boolean | undefined; // Переменная для определения, находимся ли мы на странице профиля пользователя
+  @Input() authorId: number | undefined;
 
   constructor(private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getAdv(); 
+    if (this.authorId) {
+      this.getAdv(this.authorId);
+    }
+    else this.getAdv();
   }
 
   getAdv(authorId?: number): void {

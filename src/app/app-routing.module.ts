@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'auth', loadChildren: () => import('./core/auth/auth.module').then(m => m.AuthModule) },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
-  { path: 'my_profile',  component: MyProfileComponent}, // маршрут для компонента профиля
+  { path: 'my_profile',  component: MyProfileComponent},
   { path: 'ad-detail/:id', component: AdDetailComponent },
   { path: 'bbs', component: HeaderComponent },
   { path: 'users/:id', component: UserProfileComponent }

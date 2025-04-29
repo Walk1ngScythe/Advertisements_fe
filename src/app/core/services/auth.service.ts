@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import ky from 'ky';  // Можно использовать любой HTTP клиент для запросов, например, ky или axios
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../enviroment/enviroment';
 
 @Injectable({
@@ -9,6 +9,8 @@ import { environment } from '../../../enviroment/enviroment';
 export class AuthService {
   private loginIn = new BehaviorSubject<boolean>(false);
   private currentUser = new BehaviorSubject<any | null>(null);
+  public userLocalStorage: Observable<any> = this.currentUser.asObservable();
+  public currentUserId: number | null = null;
 
   get loginIn$() {
     return this.loginIn.asObservable();
@@ -27,10 +29,28 @@ export class AuthService {
     this.checkTokenOnStartup();
   }
 
+  getUserIdFromLocalStorage(): number | null {
+    const userData = localStorage.getItem('dataUser');
+    let currentUserId: number | null = null;
+  
+    if (userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
+          currentUserId = parsedUser[0].id;
+        }
+      } catch (e) {
+        console.error('Ошибка при чтении user ID из localStorage:', e);
+      }
+    }
+  
+    return currentUserId; // ← вот этого не хватало
+  }  
+  
+
   // Проверка токена при старте
   checkTokenOnStartup(): void {
-    // Отправляем запрос на сервер для получения данных профиля
-    this.api.get('users/my-profile/')  // Эндпоинт, который ты указал
+    this.api.get('users/my-profile/')
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -38,16 +58,18 @@ export class AuthService {
         throw new Error('Invalid token');
       })
       .then((userProfile: any) => {
-        // Если токен валиден, сохраняем информацию о пользователе
         this.currentUser.next(userProfile);
-        this.loginIn.next(true);  // Пользователь авторизован
+        console.log('userProfile:', userProfile); // ← вот тут!
+        localStorage.setItem('dataUser', JSON.stringify(userProfile));
+        this.loginIn.next(true);
       })
       .catch(() => {
-        // Если токен не валиден или произошла ошибка, ставим состояние как не авторизованное
         this.currentUser.next(null);
+        this.currentUserId = null;
         this.loginIn.next(false);
       });
   }
+  
   
 
   // Логика для входа и выхода пользователя

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-ad-detail',
@@ -9,6 +10,7 @@ import { ApiService } from '../../../core/services/api.service';
   styleUrls: ['./ad-detail.component.css']
 })
 export class AdDetailComponent implements OnInit {
+  currentUser$;
   ad: any = null;
   adId: string | null = null;
   selectedImage: string | null = null;
@@ -17,8 +19,13 @@ export class AdDetailComponent implements OnInit {
   similarAds: any[] = [];
   reviews: any[] = [];
   authorId: number | null = null;
+  currentUserId!: number;
+   
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {}
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private authService: AuthService) {
+    this.currentUser$ = this.authService.currentUser$;
+    
+  }
 
   ngOnInit(): void {
     this.adId = this.route.snapshot.paramMap.get('id');
@@ -27,7 +34,12 @@ export class AdDetailComponent implements OnInit {
       this.getSimilarAds(this.adId);
       this.getReviews(this.adId);
     };
-  
+
+    this.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUserId = user.id;
+      }
+    });
   }
 
   getAdDetail(id: string): void {
@@ -81,8 +93,16 @@ export class AdDetailComponent implements OnInit {
     this.selectedImage = image;
   }
   goToUserProfilePage(authorId: number): void {
-    this.router.navigate(['/users', authorId]); 
+    const myId = this.authService.getUserIdFromLocalStorage();
+
+    if (authorId === myId) {
+      this.router.navigate(['/my_profile']);
+      
+    } else {
+      this.router.navigate(['/users', authorId]);
+    }
+    console.log(`fffffffffffffffff с ID: ${myId}`);
     console.log(`Перехожу на страницу пользователя с ID: ${authorId}`);
-    
+
   }
 }
