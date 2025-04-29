@@ -30,7 +30,7 @@ export class AuthService {
   // Проверка токена при старте
   checkTokenOnStartup(): void {
     // Отправляем запрос на сервер для получения данных профиля
-    this.api.get('users/profile/')  // Эндпоинт, который ты указал
+    this.api.get('users/my-profile/')  // Эндпоинт, который ты указал
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -70,7 +70,7 @@ export class AuthService {
   // Логика для загрузки профиля пользователя
   async loadUserProfile() {
     try {
-      const response = await this.api.get('users/profile/');
+      const response = await this.api.get('users/my-profile/');
       const userProfile = await response.json();
       if (userProfile) {
         this.currentUser.next(userProfile);

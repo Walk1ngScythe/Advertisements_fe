@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { Router } from '@angular/router';
 
@@ -9,9 +9,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./form-adv.component.css']
 })
 export class FormAdvComponent implements OnInit {
+  
   adv: any[] = [];
   isMenuVisible = false; // Состояние отображения бокового меню
   isDropdownVisible = false; // Состояние отображения выпадающего меню категорий
+  
+  @Input() isUserProfile: boolean | undefined; // Переменная для определения, находимся ли мы на странице профиля пользователя
 
   constructor(private apiService: ApiService, private router: Router) { }
 
@@ -19,11 +22,12 @@ export class FormAdvComponent implements OnInit {
     this.getAdv(); 
   }
 
-  getAdv() {
-    this.apiService.getAdvertisements().then((data: any) => {
+  getAdv(authorId?: number): void {
+    this.apiService.getAdvertisements(authorId).then((data: any) => {
       this.adv = data;
     });
   }
+  
 
   toggleMenu(): void {
     this.isMenuVisible = !this.isMenuVisible;
@@ -37,4 +41,5 @@ export class FormAdvComponent implements OnInit {
       this.router.navigate(['/ad-detail', id]); 
     console.log(`Перехожу на страницу с ID: ${id}`);
   }
+  
 }

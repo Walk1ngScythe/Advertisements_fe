@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 
 @Component({
@@ -16,8 +16,9 @@ export class AdDetailComponent implements OnInit {
   isFavorite: boolean = false;
   similarAds: any[] = [];
   reviews: any[] = [];
+  authorId: number | null = null;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {}
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.adId = this.route.snapshot.paramMap.get('id');
@@ -33,11 +34,20 @@ export class AdDetailComponent implements OnInit {
     this.apiService.getAdvertisementById(id).then((data) => {
       this.ad = data;
       this.selectedImage = data.main_image;
+      this.authorId = data.author?.id; // authorId — это number
+
+      console.log("Автор ID:", this.authorId);
+
+      if (this.authorId) {
+        this.getReviews(this.authorId.toString()); // Преобразуем в строку перед передачей
+      }
     }).catch((error) => {
       console.error('Ошибка при загрузке объявления:', error);
     });
   }
 
+
+  
   getSimilarAds(id: string): void {
     this.apiService.getSimilarAds(id).then((ads) => {
       this.similarAds = ads;
@@ -46,8 +56,8 @@ export class AdDetailComponent implements OnInit {
     });
   }
 
-  getReviews(id: string): void {
-    this.apiService.getReviews(id).then((reviews) => {
+  getReviews(authorId: string): void {
+    this.apiService.getReviews(authorId).then((reviews) => {
       this.reviews = reviews;
     }).catch((error) => {
       console.error('Ошибка при загрузке отзывов:', error);
@@ -69,5 +79,10 @@ export class AdDetailComponent implements OnInit {
 
   selectImage(image: string): void {
     this.selectedImage = image;
+  }
+  goToUserProfilePage(authorId: number): void {
+    this.router.navigate(['/users', authorId]); 
+    console.log(`Перехожу на страницу пользователя с ID: ${authorId}`);
+    
   }
 }

@@ -14,6 +14,7 @@ import localeRu from '@angular/common/locales/ru';
 import { LOCALE_ID } from '@angular/core';
 import { AdDetailComponent } from './core/pages/ad-detail/ad-detail.component'
 import { register } from 'swiper/element/bundle';
+import { UserProfileComponent } from './core/pages/user-profile/user-profile.component';
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
@@ -26,6 +27,7 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     DropdownMenuHeaderComponent,
     MyProfileComponent,
     AdDetailComponent,
+    UserProfileComponent,
   ],
   imports: [
     BrowserModule,

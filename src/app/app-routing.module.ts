@@ -4,6 +4,7 @@ import { HomeComponent } from './main/pages/home/home.component';
 import { MyProfileComponent } from './core/pages/my-profile/my-profile.component';
 import { AdDetailComponent } from './core/pages/ad-detail/ad-detail.component';
 import { HeaderComponent } from './main/components/header/header.component';
+import { UserProfileComponent } from './core/pages/user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'my_profile',  component: MyProfileComponent}, // маршрут для компонента профиля
   { path: 'ad-detail/:id', component: AdDetailComponent },
   { path: 'bbs', component: HeaderComponent },
+  { path: 'users/:id', component: UserProfileComponent }
 ];
 
 @NgModule({
