@@ -26,21 +26,21 @@
         </div>
     
         <!-- Выпадающее меню -->
-        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-            <p class="text-yellow-500">
-                <strong>Рейтинг:</strong> {{ (currentUser$ | async)?.[0]?.rating }} ★
-              </p>
+        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-56 bg-gray-800 shadow-md border border-gray-300 rounded-lg z-50">
 
             <!-- Дополнительные кнопки -->
             <div class="px-4 py-2">
                 <button routerLink="/my_profile"
-                    class="block w-full text-left text-sm text-gray-700 py-2 hover:bg-gray-100 rounded-lg">
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
                     Мой профиль
                 </button>
                 <button 
-                    class="block w-full text-left text-sm text-gray-700 py-2 hover:bg-gray-100 rounded-lg">
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
                     Мои объявления
                 </button>
+            </div>
+            <div class="px-4 py-2 block w-full text-left text-sm text-yellow-500 py-2 hover:bg-yellow rounded-lg">
+                Рейтинг: {{ (currentUser$ | async)?.[0]?.rating }} ★
             </div>
 
             <!-- Кнопка выхода -->

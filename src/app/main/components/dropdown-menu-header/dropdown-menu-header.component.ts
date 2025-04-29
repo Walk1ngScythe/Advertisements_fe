@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
+import ky from 'ky';
+import { environment } from '../../../../enviroment/enviroment';
 
 @Component({
   selector: 'app-dropdown-menu-header',
@@ -12,52 +14,36 @@ export class DropdownMenuHeaderComponent implements OnInit {
   isloggedIn$;
   currentUser$;
   isDropdownOpen = false;
-  currentRating: number = 3.5; // Рейтинг по умолчанию
-  hearts: (boolean | 'partial')[] = []; // Массив для отображения заполненных сердечек
-  filledHearts: number | undefined; // Количество полноценных сердечек
-  partialHeart: number | undefined; // Дробная часть сердечка
-  canShowButton = false;
-
+  userRole: string = '';
+  canShowButton: boolean = false;
+ 
+  private api = ky.create({
+    prefixUrl: environment.apiUrl,
+    credentials: 'include',  // Убедись, что куки отправляются автоматически
+  });
+  
   constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
     this.isloggedIn$ = this.authService.loginIn$;
     this.currentUser$ = this.authService.currentUser$;
-
-    this.currentUser$.subscribe(() => {
-      setTimeout(() => {
-          this.cdr.detectChanges();
-          console.log(this.currentUser$);
-      });
-    });
-    
   }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => console.log(user));
-    // Получаем текущего пользователя и обновляем рейтинг, если он есть
-    // this.currentUser$.subscribe(user => {
-      // if (user && user.rating !== undefined) {
-       // this.currentRating = user.rating;
-       // this.updateHearts(this.currentRating);
-      //}
-    //});
+    this.checkUserRole();
   }
 
-  updateHearts(rating: number) {
-    this.filledHearts = Math.floor(rating); // Целая часть рейтинга
-    this.partialHeart = rating - this.filledHearts; // Дробная часть рейтинга
-    this.hearts = [];
-
-    // Заполнение массива полноценных сердечек
-    for (let i = 0; i < 5; i++) {
-      if (i < this.filledHearts) {
-        this.hearts.push(true); // Полностью заполненное сердечко
-      } else if (i === this.filledHearts && this.partialHeart > 0) {
-        this.hearts.push('partial'); // Частично заполненное сердечко
-      } else {
-        this.hearts.push(false); // Пустое сердечко
-      }
+  async checkUserRole() {
+    try {
+      const response = await this.api.get('get-role/')
+        .json<{ role: string }>();
+      // Показываем кнопку только если роль пользователя 'Salesman'
+      this.canShowButton = response.role === 'Salesman';
+    } catch (error) {
+      console.error('Ошибка получения роли', error);
+      this.canShowButton = false;  // В случае ошибки роль не определена, скрываем кнопку
     }
   }
+
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
