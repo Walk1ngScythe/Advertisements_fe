@@ -23,6 +23,28 @@ export class AuthService {
   private api = ky.create({
     prefixUrl: environment.apiUrl,
     credentials: 'include',  // Убедись, что куки отправляются автоматически
+    hooks: {
+      afterResponse: [
+        async (request, options, response) => {
+          if (response.status === 401) {
+            try {
+              // Попытка обновить токен
+              const refreshResp = await ky.post(`${environment.apiUrl}/token-refresh/`, {
+                credentials: 'include'
+              });
+  
+              if (refreshResp.ok) {
+                // Повторяем оригинальный запрос
+                return ky(request, options);
+              }
+            } catch (refreshError) {
+              console.error('Refresh failed:', refreshError);
+            }
+          }
+          return response;
+        }
+      ]
+    }
   });
 
   constructor() {
@@ -105,8 +127,8 @@ export class AuthService {
   logout() {
     window.location.reload(); // Перезагрузка страницы после выхода
     // Очистка данных из localStorage
-    localStorage.removeItem('userProfile');
-    
+    localStorage.removeItem('dataUser');
+
     // Отправка запроса на сервер для удаления cookies с HttpOnly флажком
     this.api.post('auth/logout/')
       .then(response => {

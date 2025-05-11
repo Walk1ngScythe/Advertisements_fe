@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../../../shared/model/modal.services';
 
 @Component({
   selector: 'app-ad-detail',
@@ -22,7 +23,7 @@ export class AdDetailComponent implements OnInit {
   currentUserId!: number;
    
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private authService: AuthService) {
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private authService: AuthService, public modalService: ModalService) {
     this.currentUser$ = this.authService.currentUser$;
     
   }
@@ -104,5 +105,14 @@ export class AdDetailComponent implements OnInit {
     console.log(`fffffffffffffffff с ID: ${myId}`);
     console.log(`Перехожу на страницу пользователя с ID: ${authorId}`);
 
+  }
+  openReport() {
+    // Передаём authorId в модалку, используя ModalService
+    if (this.authorId !== null) {
+      this.modalService.open('report', { authorId: this.authorId });
+      console.log("Открылось с автором ID:", this.authorId);
+    } else {
+      console.warn("authorId не определён");
+    }
   }
 }

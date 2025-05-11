@@ -1,1 +1,2 @@
 <router-outlet></router-outlet>
+<app-report-modal *ngIf="(modalService.modalType$ | async) === 'report'"></app-report-modal>
