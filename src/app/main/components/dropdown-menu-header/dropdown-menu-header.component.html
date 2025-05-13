@@ -54,7 +54,10 @@
         </div>
     </div>
         <!-- Разместить объявление -->
-        <a *ngIf="canShowButton" href="#" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
-            Разместить объявление
-        </a>
+        <button *ngIf="canShowButton"
+            (click)="goToCreateAd()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
+                Разместить объявление
+        </button>
+
 </div>

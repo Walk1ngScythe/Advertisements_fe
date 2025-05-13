@@ -17,7 +17,8 @@ import { register } from 'swiper/element/bundle';
 import { UserProfileComponent } from './core/pages/user-profile/user-profile.component';
 import { DefoltLayoutComponent } from '../shared/theme/defolt-layout.component';
 import { ReportModalComponent } from '../features/report.component';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { CreateAdComponent } from './core/pages/create-ad/create-ad.component'; 
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
@@ -32,7 +33,8 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     MyProfileComponent,
     AdDetailComponent,
     UserProfileComponent,
-    ReportModalComponent
+    ReportModalComponent,
+    CreateAdComponent
   ],
   imports: [
     BrowserModule,

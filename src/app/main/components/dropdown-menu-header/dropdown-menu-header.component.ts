@@ -3,6 +3,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
 import ky from 'ky';
 import { environment } from '../../../../enviroment/enviroment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dropdown-menu-header',
@@ -22,7 +23,7 @@ export class DropdownMenuHeaderComponent implements OnInit {
     credentials: 'include',  // Убедись, что куки отправляются автоматически
   });
   
-  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef, private router: Router) {
     this.isloggedIn$ = this.authService.loginIn$;
     this.currentUser$ = this.authService.currentUser$;
   }
@@ -37,13 +38,16 @@ export class DropdownMenuHeaderComponent implements OnInit {
       const response = await this.api.get('get-role/')
         .json<{ role: string }>();
       // Показываем кнопку только если роль пользователя 'Salesman'
-      this.canShowButton = response.role === 'Salesman';
+      this.canShowButton = response.role === 'Продавец';
     } catch (error) {
       console.error('Ошибка получения роли', error);
       this.canShowButton = false;  // В случае ошибки роль не определена, скрываем кнопку
     }
   }
 
+  goToCreateAd() {
+  this.router.navigate(['/create-ad']);
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;

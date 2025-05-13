@@ -17,6 +17,15 @@ export class ApiService {
   getAdvertisementById(id: string): Promise<any> {
     return this.client.get(`bbs/${id}`).json();
   }
+  getRubric(): Promise<any[]> {
+    return this.client.get(`rubrics/`).json();
+  }
+
+  createAd(formData: FormData): Promise<any> {
+  return this.client.post('bbs/', {
+    body: formData
+  }).json();
+  }
 
   getSimilarAds(adId: string): Promise<any[]> {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();

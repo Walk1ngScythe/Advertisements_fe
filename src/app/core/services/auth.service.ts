@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import ky from 'ky';  // Можно использовать любой HTTP клиент для запросов, например, ky или axios
+import ky from 'ky';  
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../enviroment/enviroment';
 
@@ -22,7 +22,7 @@ export class AuthService {
 
   private api = ky.create({
     prefixUrl: environment.apiUrl,
-    credentials: 'include',  // Убедись, что куки отправляются автоматически
+    credentials: 'include',  
     hooks: {
       afterResponse: [
         async (request, options, response) => {
@@ -66,7 +66,7 @@ export class AuthService {
       }
     }
   
-    return currentUserId; // ← вот этого не хватало
+    return currentUserId;
   }  
   
 
@@ -81,7 +81,7 @@ export class AuthService {
       })
       .then((userProfile: any) => {
         this.currentUser.next(userProfile);
-        console.log('userProfile:', userProfile); // ← вот тут!
+        console.log('userProfile:', userProfile);
         localStorage.setItem('dataUser', JSON.stringify(userProfile));
         this.loginIn.next(true);
       })
