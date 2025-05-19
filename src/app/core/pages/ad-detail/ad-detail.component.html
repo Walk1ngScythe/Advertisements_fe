@@ -1,15 +1,11 @@
-<main class="min-h-screen bg-gray-800 text-white">
-    <app-header></app-header>
 
-    <div class="flex justify-center mt-8">
-        <section class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-5xl w-full">
-            
+        <section class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-5xl w-full mx-auto">
             <!-- Заголовок и цена -->
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center ">
                 <h1 class="text-3xl font-bold">{{ ad?.title }}</h1>
                 <div class="flex justify-end items-center space-x-4">
                     <h2 class="text-2xl text-blue-400 font-bold">{{ ad?.price }} ₽</h2>
-                    <button 
+                    <button *ngIf="!useridauthor"
                         class="text-white-900 hover:text-red-600 transition-all text-3xl"
                         [class.text-red-600]="isFavorite"
                         (click)="toggleFavorite()">
@@ -68,18 +64,41 @@
                         <p class="text-lg text-yellow-400 font-bold mt-2">★ {{ ad?.author.rating }}</p>
 
                         <!-- Кнопки "Показать телефон" и "Написать" -->
-                        <button class="bg-green-600 text-white w-full py-2 mt-3 rounded-lg hover:bg-green-700 transition-all"
-                                (click)="showPhone()">
+                        <!-- Если НЕ профиль пользователя -->
+                        <ng-container *ngIf="ad?.is_deleted; else buttonSection">
+                        <div class="bg-blue-500 text-white w-full py-2 mt-3 rounded-lg text-center font-bold">
+                            Товар продан
+                        </div>
+                        </ng-container>
+
+                        <ng-template #buttonSection>
+                        <ng-container *ngIf="!useridauthor; else ownerButtons">
+                            <button class="bg-green-600 text-white w-full py-2 mt-3 rounded-lg hover:bg-green-700 transition-all"
+                                    (click)="showPhone()">
                             {{ phoneVisible ? ad?.author.phone_number : 'Показать телефон' }}
-                        </button>
-                        <!-- (click)="openChat()" -->
-                        <button class="bg-blue-500 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all"
-                                >
+                            </button>
+                            <button class="bg-blue-500 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all">
                             Написать
-                        </button>
-                        <button class="bg-red-600 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all">
-                            <i class="fa-solid fa-exclamation-circle mr-2"></i> Пожаловаться
-                        </button>
+                            </button>
+                            <button class="bg-red-600 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all" (click)="openReport()">
+                            <i class="fa-solid fa-exclamation-circle mr-2"></i> Пожаловаться 
+                            </button>
+                        </ng-container>
+
+                        <!-- Если профиль пользователя -->
+                        <ng-template #ownerButtons>
+                            <button class="bg-orange-500 text-white w-full py-2 mt-3 rounded-lg hover:bg-orange-600 transition-all"
+                                    (click)="editAd()">
+                            <i class="fa-solid fa-pen mr-2"></i> Редактировать
+                            </button>
+                            <button class="bg-red-600 text-white w-full py-2 mt-2 rounded-lg hover:bg-red-700 transition-all"
+                                    (click)="deleteAd()">
+                            <i class="fa-solid fa-trash mr-2"></i> Удалить
+                            </button>
+                        </ng-template>
+                        </ng-template>
+
+
                     </div>
                 </div>
             </div>
@@ -90,8 +109,8 @@
                 <p class="text-gray-300 mb-4">{{ ad?.content }}</p>
                 
                 <h2 class="text-3xl font-bold mb-2">Категория</h2>
-                <p class="text-gray-300 mb-4 cursor-pointer" (click)="onRubricClick(ad?.rubric.name)">
-                    {{ ad?.rubric.name }}
+                <p class="text-gray-300 mb-4 cursor-pointer" (click)="onRubricClick(ad?.rubric_info.name)">
+                    {{ ad?.rubric_info.name }}
                 </p>
             </div>
             <div class="flex items-center space-x-6 text-sm text-white-600 mb-4">
@@ -127,5 +146,3 @@
             </div>
             
         </section>
-    </div>
-</main>

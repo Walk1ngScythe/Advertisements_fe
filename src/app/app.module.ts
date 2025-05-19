@@ -15,12 +15,17 @@ import { LOCALE_ID } from '@angular/core';
 import { AdDetailComponent } from './core/pages/ad-detail/ad-detail.component'
 import { register } from 'swiper/element/bundle';
 import { UserProfileComponent } from './core/pages/user-profile/user-profile.component';
+import { DefoltLayoutComponent } from '../shared/theme/defolt-layout.component';
+import { ReportModalComponent } from '../features/report.component';
+import { FormsModule } from '@angular/forms';
+import { CreateAdComponent } from './core/pages/create-ad/create-ad.component'; 
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
 @NgModule({
   declarations: [
     AppComponent,
+    DefoltLayoutComponent,
     HeaderComponent,
     HomeComponent,
     FormAdvComponent,
@@ -28,12 +33,18 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     MyProfileComponent,
     AdDetailComponent,
     UserProfileComponent,
+    ReportModalComponent,
+    CreateAdComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     AuthModule,
+    FormsModule
+  ],
+  exports: [
+    HeaderComponent
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }  // Установка локали по умолчанию на русский

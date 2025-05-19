@@ -30,13 +30,17 @@
 
             <!-- Дополнительные кнопки -->
             <div class="px-4 py-2">
-                <button routerLink="/my_profile"
-                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
+                <button
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg" (click)="goToMyProfile()">
                     Мой профиль
                 </button>
                 <button 
                     class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
-                    Мои объявления
+                    Сообщения
+                </button>
+                <button 
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
+                    Жалобы
                 </button>
             </div>
             <div class="px-4 py-2 block w-full text-left text-sm text-yellow-500 py-2 hover:bg-yellow rounded-lg">
@@ -54,7 +58,10 @@
         </div>
     </div>
         <!-- Разместить объявление -->
-        <a *ngIf="canShowButton" href="#" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
-            Разместить объявление
-        </a>
+        <button *ngIf="canShowButton"
+            (click)="goToCreateAd()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
+                Разместить объявление
+        </button>
+
 </div>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormAdvComponent } from '../../../main/components/form-adv/form-adv.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -12,7 +11,6 @@ import { FormAdvComponent } from '../../../main/components/form-adv/form-adv.com
   styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent implements OnInit {
-  adv: any[] = [];
   public user$ = new BehaviorSubject<any | null>(null); // Создаем BehaviorSubject
   authorId!: number;
 

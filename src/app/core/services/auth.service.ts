@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import ky from 'ky';  // Можно использовать любой HTTP клиент для запросов, например, ky или axios
+import ky from 'ky';  
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../enviroment/enviroment';
 
@@ -22,7 +22,29 @@ export class AuthService {
 
   private api = ky.create({
     prefixUrl: environment.apiUrl,
-    credentials: 'include',  // Убедись, что куки отправляются автоматически
+    credentials: 'include',  
+    hooks: {
+      afterResponse: [
+        async (request, options, response) => {
+          if (response.status === 401) {
+            try {
+              // Попытка обновить токен
+              const refreshResp = await ky.post(`${environment.apiUrl}/token-refresh/`, {
+                credentials: 'include'
+              });
+  
+              if (refreshResp.ok) {
+                // Повторяем оригинальный запрос
+                return ky(request, options);
+              }
+            } catch (refreshError) {
+              console.error('Refresh failed:', refreshError);
+            }
+          }
+          return response;
+        }
+      ]
+    }
   });
 
   constructor() {
@@ -30,22 +52,29 @@ export class AuthService {
   }
 
   getUserIdFromLocalStorage(): number | null {
-    const userData = localStorage.getItem('dataUser');
-    let currentUserId: number | null = null;
-  
+  const userData = localStorage.getItem('dataUser');
+  let currentUserId: number | null = null;
+
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
+        if (Array.isArray(parsedUser) && parsedUser.length > 0 && parsedUser[0]?.id != null) {
           currentUserId = parsedUser[0].id;
+
+          // Явная проверка перед использованием
+          if (currentUserId !== null) {
+            localStorage.setItem('myID', currentUserId.toString());
+          }
         }
       } catch (e) {
         console.error('Ошибка при чтении user ID из localStorage:', e);
       }
     }
-  
-    return currentUserId; // ← вот этого не хватало
-  }  
+
+    return currentUserId;
+  }
+
+
   
 
   // Проверка токена при старте
@@ -59,8 +88,7 @@ export class AuthService {
       })
       .then((userProfile: any) => {
         this.currentUser.next(userProfile);
-        console.log('userProfile:', userProfile); // ← вот тут!
-        localStorage.setItem('dataUser', JSON.stringify(userProfile));
+        
         this.loginIn.next(true);
       })
       .catch(() => {
@@ -69,6 +97,18 @@ export class AuthService {
         this.loginIn.next(false);
       });
   }
+
+  isAuthenticatedOnStartup(): Observable<boolean> {
+    return new Observable<boolean>(subscriber => {
+      this.checkTokenOnStartup(); // просто запускаем как побочный эффект
+      this.loginIn.subscribe(status => {
+        subscriber.next(status);
+        subscriber.complete();
+      });
+    });
+  }
+
+
   
   
 
@@ -80,6 +120,7 @@ export class AuthService {
       }).json();
       this.loginIn.next(true);
       this.loadUserProfile();
+      
       return true;
     } catch (error) {
       console.error('Login failed', error);
@@ -96,6 +137,8 @@ export class AuthService {
       const userProfile = await response.json();
       if (userProfile) {
         this.currentUser.next(userProfile);
+        localStorage.setItem('dataUser', JSON.stringify(userProfile));
+        this.getUserIdFromLocalStorage();
       }
     } catch (error) {
       console.error('Failed to load user profile:', error);
@@ -105,8 +148,8 @@ export class AuthService {
   logout() {
     window.location.reload(); // Перезагрузка страницы после выхода
     // Очистка данных из localStorage
-    localStorage.removeItem('userProfile');
-    
+    localStorage.removeItem('dataUser');
+
     // Отправка запроса на сервер для удаления cookies с HttpOnly флажком
     this.api.post('auth/logout/')
       .then(response => {
