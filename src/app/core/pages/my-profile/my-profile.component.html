@@ -4,7 +4,10 @@
   <div class="max-w-4xl mx-auto p-6 bg-gray-600 shadow-md rounded-lg">
     <div class="flex items-center space-x-4">
       <!-- Avatar Section -->
-      <img [src]="(currentUser$ | async)?.[0]?.avatar" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
+      <img [src]="(currentUser$  | async)?.[0]?.avatar"
+     alt="User Avatar"
+     class="w-24 h-24 rounded-full object-cover border-4 border-blue-500">
+
       
       <!-- User Info Section -->
       <div>
@@ -61,12 +64,8 @@
     <h2 class="text-white text-xl font-semibold mb-4">Ваши объявления</h2>
 
     <!-- Example Ad Card (this can be dynamically generated with *ngFor) -->
-    <div class="border-b border-gray-300 pb-4 mb-4">
-      <h3 class="text-white text-lg font-semibold">Название объявления</h3>
-      <p class="text-gray-200">Описание объявления...</p>
-      <button class="mt-2 py-1 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-        Подробнее
-      </button>
+    <div class="border-b border-gray-300 pb-4">
+        <app-form-adv [isUserProfile]="true" [authorId]="myauthorId"></app-form-adv>
     </div>
 
   </div>

@@ -52,22 +52,29 @@ export class AuthService {
   }
 
   getUserIdFromLocalStorage(): number | null {
-    const userData = localStorage.getItem('dataUser');
-    let currentUserId: number | null = null;
-  
+  const userData = localStorage.getItem('dataUser');
+  let currentUserId: number | null = null;
+
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
+        if (Array.isArray(parsedUser) && parsedUser.length > 0 && parsedUser[0]?.id != null) {
           currentUserId = parsedUser[0].id;
+
+          // Явная проверка перед использованием
+          if (currentUserId !== null) {
+            localStorage.setItem('myID', currentUserId.toString());
+          }
         }
       } catch (e) {
         console.error('Ошибка при чтении user ID из localStorage:', e);
       }
     }
-  
+
     return currentUserId;
-  }  
+  }
+
+
   
 
   // Проверка токена при старте
@@ -81,8 +88,7 @@ export class AuthService {
       })
       .then((userProfile: any) => {
         this.currentUser.next(userProfile);
-        console.log('userProfile:', userProfile);
-        localStorage.setItem('dataUser', JSON.stringify(userProfile));
+        
         this.loginIn.next(true);
       })
       .catch(() => {
@@ -91,6 +97,18 @@ export class AuthService {
         this.loginIn.next(false);
       });
   }
+
+  isAuthenticatedOnStartup(): Observable<boolean> {
+    return new Observable<boolean>(subscriber => {
+      this.checkTokenOnStartup(); // просто запускаем как побочный эффект
+      this.loginIn.subscribe(status => {
+        subscriber.next(status);
+        subscriber.complete();
+      });
+    });
+  }
+
+
   
   
 
@@ -102,6 +120,7 @@ export class AuthService {
       }).json();
       this.loginIn.next(true);
       this.loadUserProfile();
+      
       return true;
     } catch (error) {
       console.error('Login failed', error);
@@ -118,6 +137,8 @@ export class AuthService {
       const userProfile = await response.json();
       if (userProfile) {
         this.currentUser.next(userProfile);
+        localStorage.setItem('dataUser', JSON.stringify(userProfile));
+        this.getUserIdFromLocalStorage();
       }
     } catch (error) {
       console.error('Failed to load user profile:', error);

@@ -16,7 +16,7 @@ const routes: Routes = [
     component: DefoltLayoutComponent,
     children: [
       ...main_routes,
-      { path: 'my_profile', component: MyProfileComponent },
+      { path: 'my_profile/:id', component: MyProfileComponent },
       { path: 'ad-detail/:id', component: AdDetailComponent },
       { path: 'users/:id', component: UserProfileComponent },
       { path: 'create-ad', component: CreateAdComponent }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -21,7 +21,8 @@ export class AdDetailComponent implements OnInit {
   reviews: any[] = [];
   authorId: number | null = null;
   currentUserId!: number;
-   
+  useridauthor: boolean = false;
+  
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private authService: AuthService, public modalService: ModalService) {
     this.currentUser$ = this.authService.currentUser$;
@@ -29,6 +30,8 @@ export class AdDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
+    
     this.adId = this.route.snapshot.paramMap.get('id');
     if (this.adId) {
       this.getAdDetail(this.adId);
@@ -50,7 +53,10 @@ export class AdDetailComponent implements OnInit {
       this.authorId = data.author?.id; // authorId — это number
 
       console.log("Автор ID:", this.authorId);
-
+      const myId = this.authService.getUserIdFromLocalStorage();
+      if (this.authorId === myId) {
+      this.useridauthor = true;   
+      }
       if (this.authorId) {
         this.getReviews(this.authorId.toString()); // Преобразуем в строку перед передачей
       }
@@ -97,7 +103,7 @@ export class AdDetailComponent implements OnInit {
     const myId = this.authService.getUserIdFromLocalStorage();
 
     if (authorId === myId) {
-      this.router.navigate(['/my_profile']);
+      this.router.navigate(['/my_profile', authorId]);
       
     } else {
       this.router.navigate(['/users', authorId]);
@@ -113,6 +119,24 @@ export class AdDetailComponent implements OnInit {
       console.log("Открылось с автором ID:", this.authorId);
     } else {
       console.warn("authorId не определён");
+    }
+  }
+  editAd() {
+    //редактирование объявы
+  }
+  async deleteAd(): Promise<void> {
+    this.adId = this.route.snapshot.paramMap.get('id');
+    if (!this.adId) {
+      console.error('ID объявления не найден');
+      return;
+    }
+
+    try {
+      const result = await this.apiService.deleteAdv(this.adId);
+      window.location.reload(); // 💡 Перезагрузка текущей страницы
+      console.log('Объявление удалено:', result);
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
     }
   }
 }

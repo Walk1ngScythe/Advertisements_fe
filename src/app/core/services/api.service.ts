@@ -27,6 +27,13 @@ export class ApiService {
   }).json();
   }
 
+  uploadImage(formData: FormData): Promise<any> {
+  return this.client.post('images/', {
+    body: formData
+  }).json();
+  } 
+
+
   getSimilarAds(adId: string): Promise<any[]> {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();
   }
@@ -39,14 +46,36 @@ export class ApiService {
     return this.client.get<any[]>(`users/profile/${id}/`).json();
   }
 
-  async getAdvertisements(authorId?: number): Promise<any> {
-    let url = 'bbs/';
-    if (authorId) {
-      url += `?author=${authorId}`;
-      console.log(url)
+  deleteAdv(idAdDelete: string): Promise<Response> {
+    return this.client.delete(`bbs/${idAdDelete}/`);
+  }
+
+
+  async getAdvertisements(filters: { 
+  authorId?: number; 
+  isDeleted?: boolean; 
+  title?: string 
+  } = {}): Promise<any> {
+    const params: string[] = [];
+
+    if (filters.authorId !== undefined) {
+      params.push(`author=${filters.authorId}`);
     }
+
+    if (filters.isDeleted !== undefined) {
+      params.push(`is_deleted=${filters.isDeleted}`);
+    }
+
+    if (filters.title !== undefined && filters.title.trim() !== '') {
+      params.push(`title=${encodeURIComponent(filters.title.trim())}`);
+    }
+
+    const query = params.length > 0 ? '?' + params.join('&') : '';
+    const url = `bbs/${query}`;
+
     return this.client.get(url).json();
   }
+
 
   async sendComplaint(authorId: number, description: string): Promise<any> {
     try {

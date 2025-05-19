@@ -30,13 +30,17 @@
 
             <!-- Дополнительные кнопки -->
             <div class="px-4 py-2">
-                <button routerLink="/my_profile"
-                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
+                <button
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg" (click)="goToMyProfile()">
                     Мой профиль
                 </button>
                 <button 
                     class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
-                    Мои объявления
+                    Сообщения
+                </button>
+                <button 
+                    class="block w-full text-left text-sm text-white py-2 hover:bg-black rounded-lg">
+                    Жалобы
                 </button>
             </div>
             <div class="px-4 py-2 block w-full text-left text-sm text-yellow-500 py-2 hover:bg-yellow rounded-lg">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, input, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
 import ky from 'ky';
@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./dropdown-menu-header.component.css']
 })
 export class DropdownMenuHeaderComponent implements OnInit {
+  myUserId: number | undefined;
   isloggedIn$;
   currentUser$;
   isDropdownOpen = false;
@@ -56,5 +57,24 @@ export class DropdownMenuHeaderComponent implements OnInit {
   logout() {
     this.authService.logout(); // логика выхода в AuthService
     this.isDropdownOpen = false;
+  }
+
+  goToMyProfile() {
+    const storedId = localStorage.getItem('myID');
+
+    if (storedId !== null) {
+      const parsedId = Number(storedId);
+
+      if (!isNaN(parsedId)) {
+        this.myUserId = parsedId;
+      } else {
+        this.myUserId = undefined;
+      }
+    } else {
+      this.myUserId = undefined;
+    }
+
+    console.log("мой иддддд", this.myUserId);
+    this.router.navigate(["/my_profile/", this.myUserId])
   }
 }
