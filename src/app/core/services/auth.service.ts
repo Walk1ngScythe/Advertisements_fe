@@ -108,10 +108,6 @@ export class AuthService {
     });
   }
 
-
-  
-  
-
   // Логика для входа и выхода пользователя
   async login(phone_number: string, password: string): Promise<boolean> {
     try {

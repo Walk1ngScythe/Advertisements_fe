@@ -33,7 +33,6 @@ export class ApiService {
   }).json();
   } 
 
-
   getSimilarAds(adId: string): Promise<any[]> {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();
   }
@@ -48,6 +47,12 @@ export class ApiService {
 
   deleteAdv(idAdDelete: string): Promise<Response> {
     return this.client.delete(`bbs/${idAdDelete}/`);
+  }
+
+  registerUser(formData: FormData): Promise<any> {
+    return this.client.post('auth/register/', {
+      body: formData
+    }).json();
   }
 
 
@@ -75,7 +80,6 @@ export class ApiService {
 
     return this.client.get(url).json();
   }
-
 
   async sendComplaint(authorId: number, description: string): Promise<any> {
     try {

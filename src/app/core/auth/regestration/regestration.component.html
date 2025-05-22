@@ -1,0 +1,64 @@
+<div class="bg-gray-800 h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-gray-700 rounded-2xl shadow-lg p-6 text-white">
+    <div class="text-center mb-6">
+      <h1 class="text-2xl font-bold">Создать аккаунт</h1>
+      <p class="text-sm text-gray-300">Пожалуйста, заполните форму для регистрации.</p>
+    </div>
+
+    <form (ngSubmit)="register()" enctype="multipart/form-data">
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Имя</label>
+        <input type="text" [(ngModel)]="form.first_name" name="first_name" required
+               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Фамилия</label>
+        <input type="text" [(ngModel)]="form.last_name" name="last_name" required
+               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Email</label>
+        <input type="email" [(ngModel)]="form.email" name="email" required
+               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Телефон</label>
+        <input type="tel" [(ngModel)]="form.phone_number" name="phone_number" required
+               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Пароль</label>
+        <input type="password" [(ngModel)]="form.password" name="password" required
+               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium">Аватар (необязательно)</label>
+        <input type="file" (change)="onFileSelected($event)"
+               class="mt-1 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                      file:rounded-lg file:border-0 file:text-sm file:font-semibold
+                      file:bg-blue-500 file:text-white hover:file:bg-blue-600">
+      </div>
+
+      <button type="submit"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Зарегистрироваться
+      </button>
+    </form>
+
+    <div *ngIf="message" class="text-center text-sm text-red-400 mt-4">
+      {{ message }}
+    </div>
+
+    <p class="text-sm text-gray-300 text-center mt-4">
+        Уже есть аккаунт?
+        <a (click)="goToLogin()" class="text-blue-400 hover:underline cursor-pointer">
+            Войти
+        </a>
+    </p>
+  </div>
+</div>

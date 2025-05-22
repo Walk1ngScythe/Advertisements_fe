@@ -11,6 +11,7 @@ import { ModalService } from '../../../../shared/model/modal.services';
   styleUrls: ['./ad-detail.component.css']
 })
 export class AdDetailComponent implements OnInit {
+
   currentUser$;
   ad: any = null;
   adId: string | null = null;
@@ -23,15 +24,11 @@ export class AdDetailComponent implements OnInit {
   currentUserId!: number;
   useridauthor: boolean = false;
   
-
   constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private authService: AuthService, public modalService: ModalService) {
     this.currentUser$ = this.authService.currentUser$;
-    
   }
 
   ngOnInit(): void {
-    
-    
     this.adId = this.route.snapshot.paramMap.get('id');
     if (this.adId) {
       this.getAdDetail(this.adId);
@@ -51,8 +48,6 @@ export class AdDetailComponent implements OnInit {
       this.ad = data;
       this.selectedImage = data.main_image;
       this.authorId = data.author?.id; // authorId — это number
-
-      console.log("Автор ID:", this.authorId);
       const myId = this.authService.getUserIdFromLocalStorage();
       if (this.authorId === myId) {
       this.useridauthor = true;   
@@ -99,42 +94,37 @@ export class AdDetailComponent implements OnInit {
   selectImage(image: string): void {
     this.selectedImage = image;
   }
+  
   goToUserProfilePage(authorId: number): void {
     const myId = this.authService.getUserIdFromLocalStorage();
-
     if (authorId === myId) {
       this.router.navigate(['/my_profile', authorId]);
-      
     } else {
       this.router.navigate(['/users', authorId]);
     }
-    console.log(`fffffffffffffffff с ID: ${myId}`);
-    console.log(`Перехожу на страницу пользователя с ID: ${authorId}`);
-
   }
+
   openReport() {
-    // Передаём authorId в модалку, используя ModalService
     if (this.authorId !== null) {
       this.modalService.open('report', { authorId: this.authorId });
-      console.log("Открылось с автором ID:", this.authorId);
     } else {
       console.warn("authorId не определён");
     }
   }
+
   editAd() {
     //редактирование объявы
   }
+
   async deleteAd(): Promise<void> {
     this.adId = this.route.snapshot.paramMap.get('id');
     if (!this.adId) {
       console.error('ID объявления не найден');
       return;
     }
-
     try {
       const result = await this.apiService.deleteAdv(this.adId);
-      window.location.reload(); // 💡 Перезагрузка текущей страницы
-      console.log('Объявление удалено:', result);
+      window.location.reload();
     } catch (error) {
       console.error('Ошибка при удалении:', error);
     }

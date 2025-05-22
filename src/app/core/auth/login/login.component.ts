@@ -46,4 +46,8 @@ export class LoginComponent implements OnInit {
       alert('Произошла ошибка при входе');
     }
   }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 }

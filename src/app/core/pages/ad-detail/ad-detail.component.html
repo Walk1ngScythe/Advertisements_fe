@@ -59,7 +59,9 @@
                         <img [src]="ad?.author.avatar" alt="Аватар" 
                              class="w-24 h-24 object-cover rounded-full border-4 border-blue-500 mx-auto">
                         
-                        <h2 class="text-xl font-semibold mt-3 text-white" (click)="goToUserProfilePage(ad?.author.id)">{{ ad?.author.first_name }} {{ ad?.author.last_name }}</h2>
+                        <h2 class="text-xl font-semibold mt-3 text-white cursor-pointer" (click)="goToUserProfilePage(ad?.author.id)">
+                        {{ ad?.author.first_name }} {{ ad?.author.last_name }}
+                        </h2>
                         <p class="text-sm text-gray-400">{{ ad?.author.company.name }}</p>
                         <p class="text-lg text-yellow-400 font-bold mt-2">★ {{ ad?.author.rating }}</p>
 

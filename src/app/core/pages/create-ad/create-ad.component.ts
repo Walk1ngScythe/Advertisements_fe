@@ -7,11 +7,12 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-create-ad',
   standalone: false,
-  
   templateUrl: './create-ad.component.html',
   styleUrl: './create-ad.component.css'
+
 })
 export class CreateAdComponent {
+
    adForm!: FormGroup;
   rubrics: any[] = [];
   mainImagePreview: string | null = null;
@@ -29,7 +30,6 @@ export class CreateAdComponent {
     rubric: ['', Validators.required]
   });
 
-
     this.api.getRubric().then(data => {
       this.rubrics = data;
     });
@@ -39,7 +39,6 @@ export class CreateAdComponent {
     const file = event.target.files[0];
     if (file) {
       this.mainImageFile = file;
-
       const reader = new FileReader();
       reader.onload = () => {
         this.mainImagePreview = reader.result as string;
@@ -63,29 +62,28 @@ export class CreateAdComponent {
   }
 
   async onSubmit(): Promise<void> {
-  if (this.adForm.invalid || !this.mainImageFile) {
-    alert('Заполните все поля и выберите главное изображение');
-    return;
+    if (this.adForm.invalid || !this.mainImageFile) {
+      alert('Заполните все поля и выберите главное изображение');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', this.adForm.value.title);
+    formData.append('content', this.adForm.value.content);
+    formData.append('price', this.adForm.value.price);
+    formData.append('rubric', this.adForm.value.rubric);
+    formData.append('main_image', this.mainImageFile);
+
+    try {
+      const ad = await this.api.createAd(formData); 
+      await this.uploadAdditionalImages(ad.id);     
+      this.adForm.reset();
+      this.goToUserProfilePage();
+    } catch (error) {
+      console.error('Ошибка при создании:', error);
+      alert('Ошибка при создании');
+    }
   }
-
-  const formData = new FormData();
-  formData.append('title', this.adForm.value.title);
-  formData.append('content', this.adForm.value.content);
-  formData.append('price', this.adForm.value.price);
-  formData.append('rubric', this.adForm.value.rubric);
-  formData.append('main_image', this.mainImageFile);
-
-  try {
-    const ad = await this.api.createAd(formData); 
-    await this.uploadAdditionalImages(ad.id);     
-    this.adForm.reset();
-    this.goToUserProfilePage();
-  } catch (error) {
-    console.error('Ошибка при создании:', error);
-    alert('Ошибка при создании');
-  }
-}
-
 
   async uploadAdditionalImages(bbId: number): Promise<void> {
     for (let image of this.additionalImages) {
@@ -103,7 +101,6 @@ export class CreateAdComponent {
   goToUserProfilePage(): void {
     const myId = this.authService.getUserIdFromLocalStorage();
     this.router.navigate(['/my_profile', myId]);
-
   }
 
 }

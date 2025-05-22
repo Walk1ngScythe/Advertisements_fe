@@ -19,6 +19,7 @@ import { DefoltLayoutComponent } from '../shared/theme/defolt-layout.component';
 import { ReportModalComponent } from '../features/report.component';
 import { FormsModule } from '@angular/forms';
 import { CreateAdComponent } from './core/pages/create-ad/create-ad.component'; 
+import { RegestrationComponent } from './core/auth/regestration/regestration.component';
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
@@ -34,7 +35,8 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     AdDetailComponent,
     UserProfileComponent,
     ReportModalComponent,
-    CreateAdComponent
+    CreateAdComponent,
+    
   ],
   imports: [
     BrowserModule,

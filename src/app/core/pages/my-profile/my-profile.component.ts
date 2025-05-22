@@ -18,8 +18,8 @@ export class MyProfileComponent {
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private apiService: ApiService) {
     this.currentUser$ = this.authService.currentUser$;
-    
   }
+
   ngOnInit(): void {
     const myuserId = this.route.snapshot.paramMap.get('id'); // уже string
     if (myuserId) {
@@ -30,7 +30,7 @@ export class MyProfileComponent {
         this.user$.next(userData);
         console.log(this.user$.value);
       }).catch(error => console.error('Ошибка загрузки пользователя:', error));
-  
     }
-  }     
+  }
+
 }
