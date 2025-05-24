@@ -30,8 +30,8 @@ export class CreateAdComponent {
     rubric: ['', Validators.required]
   });
 
-    this.api.getRubric().then(data => {
-      this.rubrics = data;
+    this.api.getRubric().then((data) => {
+      this.rubrics = data.results;
     });
   }
 
@@ -75,8 +75,8 @@ export class CreateAdComponent {
     formData.append('main_image', this.mainImageFile);
 
     try {
-      const ad = await this.api.createAd(formData); 
-      await this.uploadAdditionalImages(ad.id);     
+      const ad = await this.api.createAd(formData);
+      await this.uploadAdditionalImages(ad.id);
       this.adForm.reset();
       this.goToUserProfilePage();
     } catch (error) {
@@ -99,7 +99,7 @@ export class CreateAdComponent {
   }
 
   goToUserProfilePage(): void {
-    const myId = this.authService.getUserIdFromLocalStorage();
+    const myId = this.authService.userId;
     this.router.navigate(['/my_profile', myId]);
   }
 

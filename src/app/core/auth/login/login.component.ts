@@ -1,53 +1,76 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],  // Исправление здесь
+  styleUrls: ['./login.component.css'],
   standalone: false
 })
 export class LoginComponent implements OnInit {
-
   loginForm!: FormGroup;
+  errorMessage: string | null = null;
+  isLoading: boolean = false; // Флаг загрузки
 
   constructor(
-    private authService: AuthService, 
-    private router: Router, 
-    private fb: FormBuilder
-  ) {}
+    private router: Router,
+    private authService: AuthService,
+    private route: ActivatedRoute
+  ) {
+  }
 
   ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],  // Use a regex for phone validation
-      password: ['', [Validators.required, Validators.minLength(2)]], // Add validation for password length
+    this.route.queryParams.subscribe((params) => {
+      if (params['accessDenied']) {
+        this.errorMessage = 'Доступ запрещен. У вас нет прав для доступа к этой странице.';
+      }
+    });
+
+    // Инициализация формы
+    this.loginForm = new FormGroup({
+      phone: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
     });
   }
 
-  async onSubmit(): Promise<void> {
-    if (this.loginForm.invalid) {
-      alert('Пожалуйста, заполните все поля корректно.');
-      return;
+  submitLogin(): void {
+    if (this.loginForm.valid) {
+      const phone = this.loginForm.get('phone')?.value;
+      const password = this.loginForm.get('password')?.value;
+
+      this.isLoading = true;
+
+      this.authService.login(phone, password).subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+
+          // Извлекаем ошибки из объекта
+          const errorMessages = error || {};
+
+          // Обрабатываем ошибки для email
+          if (errorMessages.phone) {
+            this.errorMessage = errorMessages.phone.join(', ');
+            this.loginForm.controls['phone'].setErrors({serverError: this.errorMessage});
+          }
+
+          // Обрабатываем ошибки для password
+          if (errorMessages.password) {
+            this.errorMessage = errorMessages.password.join(', ');
+            this.loginForm.controls['password'].setErrors({serverError: this.errorMessage});
+          }
+
+          // Если ошибок нет, показываем общее сообщение
+          if (!errorMessages.email && !errorMessages.password) {
+            this.errorMessage = 'Неизвестная ошибка. Попробуйте позже.';
+          }
+        },
+      });
     }
-
-    const { phone, password } = this.loginForm.value;
-
-    try {
-      const success = await this.authService.login(phone, password);
-      if (success) {
-        this.router.navigate(['']);
-      } else {
-        alert('Неудачный вход');
-      }
-    } catch (error) {
-      console.error('Ошибка входа', error);
-      alert('Произошла ошибка при входе');
-    }
-  }
-
-  goToRegister() {
-    this.router.navigate(['/register']);
   }
 }

@@ -1,166 +1,130 @@
 import { Injectable } from '@angular/core';
-import ky from 'ky';  
-import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../../enviroment/enviroment';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import {BehaviorSubject, catchError, EMPTY, map, Observable, of, switchMap, tap, throwError} from 'rxjs';
+import {CookieService} from 'ngx-cookie-service';
+import {environment} from '../../../enviroment/enviroment';
+
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
+interface User {
+  user_id: number;
+  role: string;
+  company_id: string;
+}
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private loginIn = new BehaviorSubject<boolean>(false);
-  private currentUser = new BehaviorSubject<any | null>(null);
-  public userLocalStorage: Observable<any> = this.currentUser.asObservable();
-  public currentUserId: number | null = null;
+  private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public currentUser: Observable<any> = this.currentUserSubject.asObservable();
+  public isLoggedIn$: Observable<boolean> = this.currentUser.pipe(
+    map(user => !!user)
+  );
 
-  get loginIn$() {
-    return this.loginIn.asObservable();
-  }
 
-  get currentUser$() {
-    return this.currentUser.asObservable();
-  }
+  constructor(private http: HttpClient, private router: Router, private getCookiesService: CookieService) {
+    const storedUser = localStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<User>(storedUser ? JSON.parse(storedUser) : null);
+    this.currentUser = this.currentUserSubject.asObservable();
+    this.isLoggedIn$ = this.currentUser.pipe(map(user => !!user));
 
-  private api = ky.create({
-    prefixUrl: environment.apiUrl,
-    credentials: 'include',  
-    hooks: {
-      afterResponse: [
-        async (request, options, response) => {
-          if (response.status === 401) {
-            try {
-              // Попытка обновить токен
-              const refreshResp = await ky.post(`${environment.apiUrl}/token-refresh/`, {
-                credentials: 'include'
-              });
-  
-              if (refreshResp.ok) {
-                // Повторяем оригинальный запрос
-                return ky(request, options);
-              }
-            } catch (refreshError) {
-              console.error('Refresh failed:', refreshError);
-            }
-          }
-          return response;
-        }
-      ]
-    }
-  });
-
-  constructor() {
-    this.checkTokenOnStartup();
-  }
-
-  getUserIdFromLocalStorage(): number | null {
-  const userData = localStorage.getItem('dataUser');
-  let currentUserId: number | null = null;
-
-    if (userData) {
-      try {
-        const parsedUser = JSON.parse(userData);
-        if (Array.isArray(parsedUser) && parsedUser.length > 0 && parsedUser[0]?.id != null) {
-          currentUserId = parsedUser[0].id;
-
-          // Явная проверка перед использованием
-          if (currentUserId !== null) {
-            localStorage.setItem('myID', currentUserId.toString());
-          }
-        }
-      } catch (e) {
-        console.error('Ошибка при чтении user ID из localStorage:', e);
-      }
-    }
-
-    return currentUserId;
+    // ВСЕГДА вызываем проверку с сервера
+    this.updateUserData();
   }
 
 
-  
+  refreshToken(): Observable<void> {
+    return this.http.post<void>(`${environment.baseURL}/users/refresh/`, {}, { withCredentials: true })
+      .pipe(
+        tap(() => console.log("Token refreshed")),
+        catchError(() => {
+          this.logout();
+          return EMPTY;
+        })
+      );
+  }
 
-  // Проверка токена при старте
-  checkTokenOnStartup(): void {
-    this.api.get('users/my-profile/')
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Invalid token');
+  login(phone_number: number, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.baseURL}/users/login/`, { phone_number, password }, { withCredentials: true })
+      .pipe(
+        tap(() => this.updateUserData()), // Обновляем данные пользователя после логина
+        catchError(this.handleError)
+      );
+  }
+
+
+  register(userData: any): Observable<any> {
+    return this.http.post<any>(`${environment.baseURL}/users/register/`,userData, { withCredentials: true }).pipe(
+      catchError(error => {
+        console.error('Ошибка при регистрации:', error);
+        return throwError(() => new Error(error.error?.message || 'Ошибка регистрации'));
       })
-      .then((userProfile: any) => {
-        this.currentUser.next(userProfile);
-        
-        this.loginIn.next(true);
+    );
+  }
+
+
+  private handleError(error: any): Observable<any> {
+    throw error;
+  }
+
+  updateUserData(): void {
+    this.refreshToken().pipe(
+      switchMap(() => this.checkAuth()),
+      catchError(() => {
+        this.currentUserSubject.next(null);
+        localStorage.removeItem('currentUser');
+        return EMPTY;
       })
-      .catch(() => {
-        this.currentUser.next(null);
-        this.currentUserId = null;
-        this.loginIn.next(false);
-      });
+    ).subscribe();
   }
 
-  isAuthenticatedOnStartup(): Observable<boolean> {
-    return new Observable<boolean>(subscriber => {
-      this.checkTokenOnStartup(); // просто запускаем как побочный эффект
-      this.loginIn.subscribe(status => {
-        subscriber.next(status);
-        subscriber.complete();
-      });
-    });
-  }
 
-  // Логика для входа и выхода пользователя
-  async login(phone_number: string, password: string): Promise<boolean> {
-    try {
-      const response = await this.api.post('auth/', {
-        json: { user: { phone_number, password } }
-      }).json();
-      this.loginIn.next(true);
-      this.loadUserProfile();
-      
-      return true;
-    } catch (error) {
-      console.error('Login failed', error);
-      this.loginIn.next(false);
-      this.currentUser.next(null);
-      return false;
-    }
-  }
-
-  // Логика для загрузки профиля пользователя
-  async loadUserProfile() {
-    try {
-      const response = await this.api.get('users/my-profile/');
-      const userProfile = await response.json();
-      if (userProfile) {
-        this.currentUser.next(userProfile);
-        localStorage.setItem('dataUser', JSON.stringify(userProfile));
-        this.getUserIdFromLocalStorage();
-      }
-    } catch (error) {
-      console.error('Failed to load user profile:', error);
-    }
-  }
-
-  logout() {
-    window.location.reload(); // Перезагрузка страницы после выхода
-    // Очистка данных из localStorage
-    localStorage.removeItem('dataUser');
-
-    // Отправка запроса на сервер для удаления cookies с HttpOnly флажком
-    this.api.post('auth/logout/')
-      .then(response => {
-        if (response.ok) {
-          this.loginIn.next(false);
-          this.currentUser.next(null);
-          console.log('Successfully logged out');     
-        } else {
-          console.error('Failed to log out');
-        }
+  // Метод для проверки авторизации на сервере
+  checkAuth(): Observable<any> {
+    return this.http.get<any>(`${environment.baseURL}/users/check/`, { withCredentials: true }).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+      }),
+      catchError(() => {
+        this.currentUserSubject.next(null);
+        localStorage.removeItem('currentUser');
+        return of(null);
       })
-      .catch(error => {
-        console.error('Error during logout:', error);
-      });
+    );
   }
-  
-  
+
+  logout(): void {
+    this.getCookiesService.deleteAll()
+    this.currentUserSubject.next(null);
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/']);
+  }
+
+
+
+  get currentUserValue(): any {
+    return this.currentUserSubject.value;
+  }
+
+  // Получение роли, ID и организации из токена
+  get role(): string {
+    return this.currentUserValue?.role || '';
+  }
+
+  get company(): string {
+    return this.currentUserValue?.company_id || '';
+  }
+
+  get userId(): number {
+    return this.currentUserValue?.user_id || 0;
+  }
+
 }

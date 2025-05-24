@@ -1,8 +1,8 @@
 
   <!-- Сетка: меняется количество колонок в зависимости от isUserProfile -->
-  <div 
-    [ngClass]="isUserProfile 
-      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' 
+  <div
+    [ngClass]="isUserProfile
+      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
       : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4'">
 
     <!-- Карточка -->
@@ -17,11 +17,11 @@
   </div>
 
   <!-- Изображение -->
-  <img 
-    [src]="data.main_image" 
+  <img
+    [src]="data.main_image"
     [alt]="data.title"
     class="w-full h-48 object-cover">
-  
+
   <!-- Тело карточки -->
   <div class="p-4">
     <h2 class="text-xl font-bold mb-2 truncate">{{data.title}}</h2>

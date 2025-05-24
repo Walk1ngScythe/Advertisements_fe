@@ -1,8 +1,6 @@
-import { Component, Input, input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
-import ky from 'ky';
-import { environment } from '../../../../enviroment/enviroment';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,38 +10,27 @@ import { Router } from '@angular/router';
   styleUrls: ['./dropdown-menu-header.component.css']
 })
 export class DropdownMenuHeaderComponent implements OnInit {
-  myUserId: number | undefined;
   isloggedIn$;
   currentUser$;
   isDropdownOpen = false;
-  userRole: string = '';
   canShowButton: boolean = false;
- 
-  private api = ky.create({
-    prefixUrl: environment.apiUrl,
-    credentials: 'include',  // Убедись, что куки отправляются автоматически
-  });
-  
+
   constructor(private authService: AuthService, private cdr: ChangeDetectorRef, private router: Router) {
-    this.isloggedIn$ = this.authService.loginIn$;
-    this.currentUser$ = this.authService.currentUser$;
+    this.isloggedIn$ = this.authService.isLoggedIn$;
+    this.currentUser$ = this.authService.currentUser;
+
   }
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => console.log(user));
-    this.checkUserRole();
-  }
 
-  async checkUserRole() {
-    try {
-      const response = await this.api.get('get-role/')
-        .json<{ role: string }>();
-      // Показываем кнопку только если роль пользователя 'Salesman'
-      this.canShowButton = response.role === 'Продавец';
-    } catch (error) {
-      console.error('Ошибка получения роли', error);
-      this.canShowButton = false;  // В случае ошибки роль не определена, скрываем кнопку
-    }
+    // принудительно вызываем проверку check, чтобы в случае чего localstorage обновился
+
+    this.authService.updateUserData();
+
+    this.authService.currentUser.subscribe(user => {
+      console.log(user);
+      this.canShowButton = user?.role === 'Продавец';
+    });
   }
 
   goToCreateAd() {
@@ -55,26 +42,16 @@ export class DropdownMenuHeaderComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout(); // логика выхода в AuthService
-    this.isDropdownOpen = false;
+    this.authService.logout();
   }
 
+
   goToMyProfile() {
-    const storedId = localStorage.getItem('myID');
-
-    if (storedId !== null) {
-      const parsedId = Number(storedId);
-
-      if (!isNaN(parsedId)) {
-        this.myUserId = parsedId;
-      } else {
-        this.myUserId = undefined;
-      }
+    const id = this.authService.userId;
+    if (id) {
+      this.router.navigate(["/my_profile/", id]);
     } else {
-      this.myUserId = undefined;
+      console.warn("ID пользователя не найден");
     }
-
-    console.log("мой иддддд", this.myUserId);
-    this.router.navigate(["/my_profile/", this.myUserId])
   }
 }

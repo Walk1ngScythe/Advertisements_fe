@@ -8,7 +8,7 @@ import { environment } from '../../../enviroment/enviroment';
 export class ApiService {
 
   private client = ky.create({
-    prefixUrl: environment.apiUrl,
+    prefixUrl: environment.baseURL,
     credentials: 'include',
   });
 
@@ -17,12 +17,12 @@ export class ApiService {
   getAdvertisementById(id: string): Promise<any> {
     return this.client.get(`bbs/${id}`).json();
   }
-  getRubric(): Promise<any[]> {
-    return this.client.get(`rubrics/`).json();
+  getRubric(): Promise<any> {
+    return this.client.get<{ results: any[] }>(`rubrics/`).json();
   }
 
   createAd(formData: FormData): Promise<any> {
-  return this.client.post('bbs/', {
+  return this.client.post('bbs_edit/', {
     body: formData
   }).json();
   }
@@ -31,15 +31,16 @@ export class ApiService {
   return this.client.post('images/', {
     body: formData
   }).json();
-  } 
+  }
 
   getSimilarAds(adId: string): Promise<any[]> {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();
   }
 
-  getReviews(sellerId: string): Promise<any[]> {
-    return this.client.get<any[]>(`users/${sellerId}/reviews/`).json();
+  getSellerReviews(sellerId: string): Promise<any> {
+    return this.client.get<{ results: any[] }>(`users/${sellerId}/reviews/`).json();
   }
+
 
   getUserById(id: string): Promise<any> {
     return this.client.get<any[]>(`users/profile/${id}/`).json();
@@ -56,10 +57,10 @@ export class ApiService {
   }
 
 
-  async getAdvertisements(filters: { 
-  authorId?: number; 
-  isDeleted?: boolean; 
-  title?: string 
+  async getAdvertisements(filters: {
+  authorId?: number;
+  isDeleted?: boolean;
+  title?: string
   } = {}): Promise<any> {
     const params: string[] = [];
 

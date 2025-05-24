@@ -5,17 +5,21 @@
       <p class="text-sm text-gray-300">Добро пожаловать! Пожалуйста, войдите, чтобы продолжить.</p>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+
+
+
       <div class="mb-4">
         <label for="tel" class="block text-sm font-medium">Номер телефона</label>
-        <input type="tel" id="tel" formControlName="phone" required
-               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <input type="tel" id="tel" formControlName="phone" required class="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <span *ngIf="this.loginForm.get('phone')?.invalid && this.loginForm.get('phone')?.touched" class="text-xs text-red-600 dark:text-red-400">Поле обязательное *</span>
+
       </div>
 
       <div class="mb-4">
         <label for="password" class="block text-sm font-medium">Пароль</label>
-        <input type="password" id="password" formControlName="password" required
-               class="mt-1 block w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <input type="password" id="password" formControlName="password" required class="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <span *ngIf="this.loginForm.get('password')?.invalid && this.loginForm.get('password')?.touched" class="text-xs text-red-600 dark:text-red-400">Поле обязательное *</span>
       </div>
 
       <div class="flex justify-between items-center mb-6">
@@ -24,15 +28,17 @@
         <a href="#" class="text-sm text-blue-400 hover:underline">Забыли пароль?</a>
       </div>
 
-      <button type="submit"
+      <button [disabled]="loginForm.invalid || isLoading"
               class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        Войти
+
+        <span *ngIf="isLoading">Загрузка...</span>
+        <span *ngIf="!isLoading">Войти</span>
       </button>
     </form>
 
     <p class="text-sm text-gray-300 text-center mt-4">
         Нет аккаунта?
-        <a (click)="goToRegister()" class="text-blue-400 hover:underline cursor-pointer">
+        <a routerLink="register" class="text-blue-400 hover:underline cursor-pointer">
             Создать
         </a>
     </p>
