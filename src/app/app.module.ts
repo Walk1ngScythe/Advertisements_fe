@@ -22,6 +22,8 @@ import { CreateAdComponent } from './core/pages/create-ad/create-ad.component';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from '@angular/common/http';
 import {tokenInterceptor} from './core/interceptors/token.interceptor';
 import {SlickCarouselModule} from "ngx-slick-carousel";
+import {CompanyRequestComponent} from '../features/companyRequest.component';
+
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
@@ -38,7 +40,7 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     UserProfileComponent,
     ReportModalComponent,
     CreateAdComponent,
-
+    CompanyRequestComponent,
   ],
     imports: [
         BrowserModule,

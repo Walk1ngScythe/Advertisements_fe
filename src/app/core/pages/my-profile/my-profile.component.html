@@ -57,7 +57,8 @@
       </button>
 
       <!-- Become Legal Entity Button -->
-      <button class="w-full md:w-auto py-2 px-4 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500">
+      <button *ngIf="canShowButton" (click)="openCompanyRequest()"
+        class="w-full md:w-auto py-2 px-4 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500">
         Стать юр. лицом
       </button>
     </div>

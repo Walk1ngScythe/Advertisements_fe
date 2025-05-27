@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-regestration',
   standalone: false,
-  
+
   templateUrl: './regestration.component.html',
   styleUrl: './regestration.component.css'
 })
@@ -25,6 +26,7 @@ export class RegestrationComponent {
   constructor(
     private apiservice: ApiService,
     private router: Router,
+    private authservice: AuthService,
   ) {}
 
   onFileSelected(event: Event) {
@@ -46,7 +48,7 @@ export class RegestrationComponent {
         formData.append('avatar', this.selectedFile);
       }
 
-      const response = await this.apiservice.registerUser(formData);
+      const response = await this.authservice.register(formData);
       this.message = 'Пользователь успешно зарегистрирован!';
       console.log('Ответ:', response);
     } catch (error: any) {

@@ -35,6 +35,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
+
   submitLogin(): void {
     if (this.loginForm.valid) {
       const phone = this.loginForm.get('phone')?.value;

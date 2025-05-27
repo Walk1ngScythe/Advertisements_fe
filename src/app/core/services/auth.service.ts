@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {BehaviorSubject, catchError, EMPTY, map, Observable, of, switchMap, tap, throwError} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
 import {environment} from '../../../enviroment/enviroment';
+import ky from 'ky';
 
 interface AuthResponse {
   access_token: string;
@@ -27,7 +28,10 @@ export class AuthService {
   public isLoggedIn$: Observable<boolean> = this.currentUser.pipe(
     map(user => !!user)
   );
-
+  private client = ky.create({
+    prefixUrl: environment.baseURL,
+    credentials: 'include',
+  });
 
   constructor(private http: HttpClient, private router: Router, private getCookiesService: CookieService) {
     const storedUser = localStorage.getItem('currentUser');
@@ -50,6 +54,7 @@ export class AuthService {
         })
       );
   }
+
 
   login(phone_number: number, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.baseURL}/users/login/`, { phone_number, password }, { withCredentials: true })

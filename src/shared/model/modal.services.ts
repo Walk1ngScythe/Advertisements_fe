@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export type ModalType =
-  | 'report'; 
+  | 'report'
+  | 'companyRequest';
 
 export interface ModalData {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,8 +21,8 @@ export class ModalService {
 
   open(type: ModalType, data: ModalData = {}) {
     this.modalTypeSubject.next(type);
-    this.modalDataSubject.next(data); 
-    this.isOpenSubject.next(true); 
+    this.modalDataSubject.next(data);
+    this.isOpenSubject.next(true);
   }
 
   close() {

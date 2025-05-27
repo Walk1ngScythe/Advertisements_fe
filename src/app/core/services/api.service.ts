@@ -41,19 +41,24 @@ export class ApiService {
     return this.client.get<{ results: any[] }>(`users/${sellerId}/reviews/`).json();
   }
 
-
   getUserById(id: string): Promise<any> {
     return this.client.get<any[]>(`users/profile/${id}/`).json();
   }
 
   deleteAdv(idAdDelete: string): Promise<Response> {
-    return this.client.delete(`bbs/${idAdDelete}/`);
+    return this.client.delete(`bbs_edit/${idAdDelete}/`);
   }
 
-  registerUser(formData: FormData): Promise<any> {
-    return this.client.post('auth/register/', {
-      body: formData
-    }).json();
+  async submitCompanyRequest(formData: FormData): Promise<any> {
+    try {
+      return await this.client.post(`applications/create/`, {
+        body: formData,
+        credentials: 'include', // если используешь куки для авторизации
+      }).json();
+    } catch (error) {
+      console.error('Ошибка при отправке заявки на компанию:', error);
+      throw error;
+    }
   }
 
 

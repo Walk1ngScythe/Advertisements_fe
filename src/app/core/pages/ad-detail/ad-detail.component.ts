@@ -117,6 +117,8 @@ export class AdDetailComponent implements OnInit {
     }
   }
 
+
+
   editAd() {
     //редактирование объявы
   }

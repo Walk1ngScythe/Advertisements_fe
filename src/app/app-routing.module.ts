@@ -18,7 +18,7 @@ const routes: Routes = [
       { path: 'my_profile/:id', component: MyProfileComponent, canActivate: [authGuard] },
       { path: 'ad-detail/:id', component: AdDetailComponent },
       { path: 'users/:id', component: UserProfileComponent  },
-      { path: 'create-ad', component: CreateAdComponent }
+      { path: 'create-ad', component: CreateAdComponent,  canActivate: [authGuard] }
     ]
   },
   {
