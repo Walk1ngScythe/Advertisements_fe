@@ -120,7 +120,7 @@ export class AdDetailComponent implements OnInit {
 
 
   editAd() {
-    //редактирование объявы
+    this.router.navigate(['/edit-ad/', this.adId]);
   }
 
   async deleteAd(): Promise<void> {

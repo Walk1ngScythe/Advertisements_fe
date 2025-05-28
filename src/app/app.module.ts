@@ -23,6 +23,7 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from '@angular/c
 import {tokenInterceptor} from './core/interceptors/token.interceptor';
 import {SlickCarouselModule} from "ngx-slick-carousel";
 import {CompanyRequestComponent} from '../features/companyRequest.component';
+import { EditAdComponent } from './core/pages/edit-ad/edit-ad.component';
 
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
@@ -41,6 +42,7 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     ReportModalComponent,
     CreateAdComponent,
     CompanyRequestComponent,
+    EditAdComponent,
   ],
     imports: [
         BrowserModule,

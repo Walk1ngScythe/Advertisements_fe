@@ -17,6 +17,7 @@ export class ApiService {
   getAdvertisementById(id: string): Promise<any> {
     return this.client.get(`bbs/${id}`).json();
   }
+
   getRubric(): Promise<any> {
     return this.client.get<{ results: any[] }>(`rubrics/`).json();
   }
@@ -37,13 +38,36 @@ export class ApiService {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();
   }
 
+  updateAd(adId: number, formData: FormData): Promise<any> {
+    return this.client.patch(`bbs_edit/${adId}/`, {
+      body: formData,
+    }).json();
+  }
+
+  async uploadAdImages(adId: number, files: File[]): Promise<any[]> {
+    const uploaded = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append('bb', String(adId));
+      formData.append('image', files[i]);
+
+      const response = await this.uploadImage(formData);
+      uploaded.push(response);
+    }
+
+    return uploaded;
+  }
+
+
   getSellerReviews(sellerId: string): Promise<any> {
     return this.client.get<{ results: any[] }>(`users/${sellerId}/reviews/`).json();
   }
 
   getUserById(id: string): Promise<any> {
-    return this.client.get<any[]>(`users/profile/${id}/`).json();
+    return this.client.get(`users/profile/${id}/`).json<any>().then(response => response.results[0]);
   }
+
 
   deleteAdv(idAdDelete: string): Promise<Response> {
     return this.client.delete(`bbs_edit/${idAdDelete}/`);

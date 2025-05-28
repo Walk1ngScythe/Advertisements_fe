@@ -48,14 +48,15 @@ export class RegestrationComponent {
         formData.append('avatar', this.selectedFile);
       }
 
-      const response = await this.authservice.register(formData);
+      const response = await this.authservice.register(formData).toPromise(); // <--- важно
       this.message = 'Пользователь успешно зарегистрирован!';
       console.log('Ответ:', response);
     } catch (error: any) {
-      this.message = 'Ошибка: ' + (error.response?.message || error.message || 'Неизвестная ошибка');
+      this.message = 'Ошибка: ' + (error.message || 'Неизвестная ошибка');
       console.error('Ошибка:', error);
     }
   }
+
   goToLogin() {
     this.router.navigate(['auth/login']);
   }
