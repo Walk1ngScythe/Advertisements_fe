@@ -8,7 +8,7 @@ import { environment } from '../../../enviroment/enviroment';
 export class ApiService {
 
   private client = ky.create({
-    prefixUrl: environment.apiUrl,
+    prefixUrl: environment.baseURL,
     credentials: 'include',
   });
 
@@ -17,12 +17,13 @@ export class ApiService {
   getAdvertisementById(id: string): Promise<any> {
     return this.client.get(`bbs/${id}`).json();
   }
-  getRubric(): Promise<any[]> {
-    return this.client.get(`rubrics/`).json();
+
+  getRubric(): Promise<any> {
+    return this.client.get<{ results: any[] }>(`rubrics/`).json();
   }
 
   createAd(formData: FormData): Promise<any> {
-  return this.client.post('bbs/', {
+  return this.client.post('bbs_edit/', {
     body: formData
   }).json();
   }
@@ -31,30 +32,81 @@ export class ApiService {
   return this.client.post('images/', {
     body: formData
   }).json();
-  } 
-
+  }
 
   getSimilarAds(adId: string): Promise<any[]> {
     return this.client.get<any[]>(`bbs/${adId}/similar`).json();
   }
 
-  getReviews(sellerId: string): Promise<any[]> {
-    return this.client.get<any[]>(`users/${sellerId}/reviews/`).json();
+  updateAd(adId: number, formData: FormData): Promise<any> {
+    return this.client.patch(`bbs_edit/${adId}/`, {
+      body: formData,
+    }).json();
+  }
+
+  async uploadAdImages(adId: number, files: File[]): Promise<any[]> {
+    const uploaded = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append('bb', String(adId));
+      formData.append('image', files[i]);
+
+      const response = await this.uploadImage(formData);
+      uploaded.push(response);
+    }
+
+    return uploaded;
+  }
+
+
+  getSellerReviews(sellerId: string): Promise<any> {
+    return this.client.get<{ results: any[] }>(`users/${sellerId}/reviews/`).json();
   }
 
   getUserById(id: string): Promise<any> {
-    return this.client.get<any[]>(`users/profile/${id}/`).json();
+    return this.client.get(`users/profile/${id}/`).json<any>().then(response => response.results[0]);
   }
+
+  updateUser(userId: number, formData: FormData): Promise<any> {
+    return this.client.patch(`users/edit/${userId}/`, {
+      body: formData,
+    }).json();
+  }
+
+  changePassword(userId: string, oldPassword: string, newPassword: string, newPasswordConfirm: string): Promise<any> {
+    return this.client.post(`users/edit/${userId}/change_password/`, {
+      json: {
+        old_password: oldPassword,
+        new_password: newPassword,
+        new_password_confirm: newPasswordConfirm,
+      }
+    }).json();
+  }
+
+
 
   deleteAdv(idAdDelete: string): Promise<Response> {
-    return this.client.delete(`bbs/${idAdDelete}/`);
+    return this.client.delete(`bbs_edit/${idAdDelete}/`);
+  }
+
+  async submitCompanyRequest(formData: FormData): Promise<any> {
+    try {
+      return await this.client.post(`applications/create/`, {
+        body: formData,
+        credentials: 'include', // если используешь куки для авторизации
+      }).json();
+    } catch (error) {
+      console.error('Ошибка при отправке заявки на компанию:', error);
+      throw error;
+    }
   }
 
 
-  async getAdvertisements(filters: { 
-  authorId?: number; 
-  isDeleted?: boolean; 
-  title?: string 
+  async getAdvertisements(filters: {
+  authorId?: number;
+  isDeleted?: boolean;
+  title?: string
   } = {}): Promise<any> {
     const params: string[] = [];
 
@@ -75,7 +127,6 @@ export class ApiService {
 
     return this.client.get(url).json();
   }
-
 
   async sendComplaint(authorId: number, description: string): Promise<any> {
     try {

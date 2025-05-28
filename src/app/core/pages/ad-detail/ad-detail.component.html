@@ -13,33 +13,29 @@
                         <i class="fa-regular" *ngIf="!isFavorite">&#9829;</i> <!-- Пустое сердце -->
                     </button>
                 </div>
-                
+
             </div>
 
             <div class="flex flex-col lg:flex-row gap-6 mt-6">
-                
+
                 <!-- Левая часть: Фото объявления -->
                 <div class="w-full lg:w-2/3">
-                    <swiper-container
-                        [navigation]="true"
-                        [pagination]="{ clickable: true }"
-                        [autoplay]="{ delay: 3000 }"
-                        class="rounded-lg"
-                    >
-                        <!-- Кнопки навигации -->
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
+                  <ngx-slick-carousel
+                    #slickModal="slick-carousel"
+                    class="carousel"
+                    [config]="slideConfig"
+                  >
+                    <!-- Основное изображение -->
+                    <div ngxSlickItem *ngIf="ad?.main_image" class="slide">
+                      <img [src]="ad.main_image" alt="{{ ad.title }}" class="w-full h-96 object-cover rounded-lg" />
+                    </div>
 
-                        <!-- Первый слайд: основное изображение -->
-                        <swiper-slide>
-                            <img [src]="ad?.main_image" alt="{{ ad?.title }}" class="w-full h-96 object-cover rounded-lg">
-                        </swiper-slide>
+                    <!-- Дополнительные изображения -->
+                    <div ngxSlickItem *ngFor="let img of ad?.images || []" class="slide">
+                      <img [src]="img.image" alt="Фото" class="w-full h-96 object-cover rounded-lg" />
+                    </div>
+                  </ngx-slick-carousel>
 
-                        <!-- Остальные слайды: дополнительные изображения -->
-                        <swiper-slide *ngFor="let img of ad?.images">
-                            <img [src]="img.image" alt="Фото" class="w-full h-96 object-cover rounded-lg">
-                        </swiper-slide>
-                    </swiper-container>
                 </div>
 
                 <!-- Правая часть: Цена, избранное, продавец -->
@@ -56,10 +52,12 @@
 
                     <!-- Блок информации о продавце (в стиле Авито) -->
                     <div class="bg-gray-800 p-4 rounded-lg shadow-md text-center">
-                        <img [src]="ad?.author.avatar" alt="Аватар" 
+                        <img [src]="ad?.author.avatar" alt="Аватар"
                              class="w-24 h-24 object-cover rounded-full border-4 border-blue-500 mx-auto">
-                        
-                        <h2 class="text-xl font-semibold mt-3 text-white" (click)="goToUserProfilePage(ad?.author.id)">{{ ad?.author.first_name }} {{ ad?.author.last_name }}</h2>
+
+                        <h2 class="text-xl font-semibold mt-3 text-white cursor-pointer" (click)="goToUserProfilePage(ad?.author.id)">
+                        {{ ad?.author.first_name }} {{ ad?.author.last_name }}
+                        </h2>
                         <p class="text-sm text-gray-400">{{ ad?.author.company.name }}</p>
                         <p class="text-lg text-yellow-400 font-bold mt-2">★ {{ ad?.author.rating }}</p>
 
@@ -81,7 +79,7 @@
                             Написать
                             </button>
                             <button class="bg-red-600 text-white w-full py-2 mt-2 rounded-lg hover:bg-blue-600 transition-all" (click)="openReport()">
-                            <i class="fa-solid fa-exclamation-circle mr-2"></i> Пожаловаться 
+                            <i class="fa-solid fa-exclamation-circle mr-2"></i> Пожаловаться
                             </button>
                         </ng-container>
 
@@ -107,7 +105,7 @@
             <div class="mt-6">
                 <h2 class="text-3xl font-bold mb-2">Описание</h2>
                 <p class="text-gray-300 mb-4">{{ ad?.content }}</p>
-                
+
                 <h2 class="text-3xl font-bold mb-2">Категория</h2>
                 <p class="text-gray-300 mb-4 cursor-pointer" (click)="onRubricClick(ad?.rubric_info.name)">
                     {{ ad?.rubric_info.name }}
@@ -115,12 +113,12 @@
             </div>
             <div class="flex items-center space-x-6 text-sm text-white-600 mb-4">
                 <p>ID: {{ ad?.id }}</p>
-                <p>Размещено: {{ ad?.published | date:'longDate' }}</p>  
-                <p>Просмотров: {{ ad?.views }}</p>         
+                <p>Размещено: {{ ad?.published | date:'longDate' }}</p>
+                <p>Просмотров: {{ ad?.views }}</p>
             </div>
-            
-            
-            
+
+
+
 
             <!-- Отзывы о продавце -->
             <div class="mt-6">
@@ -132,17 +130,17 @@
                 </div>
             </div>
 
-            <!-- Похожие объявления -->
-            <div class="mt-6">
-                <h2 class="text-2xl font-bold mb-4">Похожие объявления</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div *ngFor="let similarAd of similarAds" class="bg-gray-600 p-4 rounded-lg">
-                        <img [src]="similarAd.main_image" alt="" class="w-full h-32 object-cover rounded-md">
-                        <h3 class="text-lg font-semibold mt-2">{{ similarAd.title }}</h3>
-                        <p class="text-blue-400">{{ similarAd.price }} ₽</p>
-                        <button class="text-blue-500 mt-2">Подробнее</button>
-                    </div>
-                </div>
-            </div>
-            
+<!--            &lt;!&ndash; Похожие объявления &ndash;&gt;-->
+<!--            <div class="mt-6">-->
+<!--                <h2 class="text-2xl font-bold mb-4">Похожие объявления</h2>-->
+<!--                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">-->
+<!--                    <div *ngFor="let similarAd of similarAds" class="bg-gray-600 p-4 rounded-lg">-->
+<!--                        <img [src]="similarAd.main_image" alt="" class="w-full h-32 object-cover rounded-md">-->
+<!--                        <h3 class="text-lg font-semibold mt-2">{{ similarAd.title }}</h3>-->
+<!--                        <p class="text-blue-400">{{ similarAd.price }} ₽</p>-->
+<!--                        <button class="text-blue-500 mt-2">Подробнее</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
         </section>

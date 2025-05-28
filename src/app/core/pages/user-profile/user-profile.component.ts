@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent implements OnInit {
+  
   public user$ = new BehaviorSubject<any | null>(null); // Создаем BehaviorSubject
   authorId!: number;
 
@@ -26,7 +27,6 @@ export class UserProfileComponent implements OnInit {
         this.user$.next(userData);
         console.log(this.user$.value);
       }).catch(error => console.error('Ошибка загрузки пользователя:', error));
-  
     }
   }
   

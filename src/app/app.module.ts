@@ -18,7 +18,15 @@ import { UserProfileComponent } from './core/pages/user-profile/user-profile.com
 import { DefoltLayoutComponent } from '../shared/theme/defolt-layout.component';
 import { ReportModalComponent } from '../features/report.component';
 import { FormsModule } from '@angular/forms';
-import { CreateAdComponent } from './core/pages/create-ad/create-ad.component'; 
+import { CreateAdComponent } from './core/pages/create-ad/create-ad.component';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from '@angular/common/http';
+import {tokenInterceptor} from './core/interceptors/token.interceptor';
+import {SlickCarouselModule} from "ngx-slick-carousel";
+import {CompanyRequestComponent} from '../features/companyRequest.component';
+import { EditAdComponent } from './core/pages/edit-ad/edit-ad.component';
+import { EditUserComponent } from './core/pages/edit-user/edit-user.component';
+import {ChangePasswordModalComponent} from '../features/change-password-modal.component';
+
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
 
@@ -34,20 +42,29 @@ registerLocaleData(localeRu); // Регистрация русской лока�
     AdDetailComponent,
     UserProfileComponent,
     ReportModalComponent,
-    CreateAdComponent
+    CreateAdComponent,
+    CompanyRequestComponent,
+    EditAdComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    AuthModule,
-    FormsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        AuthModule,
+        FormsModule,
+        SlickCarouselModule,
+
+    ],
   exports: [
     HeaderComponent
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'ru' }  // Установка локали по умолчанию на русский
+    {
+      provide: LOCALE_ID, useValue: 'ru',
+    },
+
+    provideHttpClient(withInterceptors([tokenInterceptor])),
+
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

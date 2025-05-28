@@ -1,39 +1,46 @@
-<div class="bg-gray-100 h-screen flex items-center justify-center">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Войти в аккаунт</h1>
-            <p class="text-sm text-gray-600">Добро пожаловать! Пожалуйста, войдите, чтобы продолжить.</p>
-        </div>
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="mb-4">
-                <label for="tel" class="block text-sm font-medium text-gray-700">Номер телефона</label>
-                <input type="tel" id="tel" formControlName="phone" required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700">Пароль</label>
-                <input type="password" id="password" formControlName="password" required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div class="flex justify-between items-center mb-6">
-                <label class="flex items-center">
-                    <input type="checkbox" class="form-checkbox text-blue-500">
-                    <span class="ml-2 text-sm text-gray-600">Запомнить меня</span>
-                </label>
-                <a href="#" class="text-sm text-blue-500 hover:underline">Забыли пароль?</a>
-            </div>
-
-            <button type="submit"
-                    class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Войти
-            </button>
-        </form>
-
-        <p class="text-sm text-gray-600 text-center mt-4">
-            Нет аккаунта? <a href="#" class="text-blue-500 hover:underline">Создать</a>
-        </p>
+<div class="bg-gray-800 h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-gray-700 rounded-2xl shadow-lg p-6 text-white">
+    <div class="text-center mb-6">
+      <h1 class="text-2xl font-bold">Войти в аккаунт</h1>
+      <p class="text-sm text-gray-300">Добро пожаловать! Пожалуйста, войдите, чтобы продолжить.</p>
     </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+
+
+
+      <div class="mb-4">
+        <label for="tel" class="block text-sm font-medium">Номер телефона</label>
+        <input type="tel" id="tel" formControlName="phone" required class="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <span *ngIf="this.loginForm.get('phone')?.invalid && this.loginForm.get('phone')?.touched" class="text-xs text-red-600 dark:text-red-400">Поле обязательное *</span>
+
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium">Пароль</label>
+        <input type="password" id="password" formControlName="password" required class="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <span *ngIf="this.loginForm.get('password')?.invalid && this.loginForm.get('password')?.touched" class="text-xs text-red-600 dark:text-red-400">Поле обязательное *</span>
+      </div>
+
+      <div class="flex justify-between items-center mb-6">
+        <label class="flex items-center">
+        </label>
+        <a href="#" class="text-sm text-blue-400 hover:underline">Забыли пароль?</a>
+      </div>
+
+      <button [disabled]="loginForm.invalid || isLoading"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        <span *ngIf="isLoading">Загрузка...</span>
+        <span *ngIf="!isLoading">Войти</span>
+      </button>
+    </form>
+
+    <p class="text-sm text-gray-300 text-center mt-4">
+        Нет аккаунта?
+        <a (click)="goToRegister()" routerLink="register" class="text-blue-400 hover:underline cursor-pointer">
+            Создать
+        </a>
+    </p>
+  </div>
 </div>

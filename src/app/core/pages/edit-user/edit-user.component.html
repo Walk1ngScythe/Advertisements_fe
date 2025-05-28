@@ -1,0 +1,48 @@
+<div class="bg-gray-800 min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-md bg-gray-700 rounded-2xl shadow-lg p-6 text-white">
+    <h2 class="text-2xl font-bold mb-6 text-center">Редактировать профиль</h2>
+
+    <form (ngSubmit)="saveProfile()" #editForm="ngForm" novalidate>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Имя</label>
+        <input type="text" [(ngModel)]="form.first_name" name="first_name" required
+               class="w-full px-4 py-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Фамилия</label>
+        <input type="text" [(ngModel)]="form.last_name" name="last_name" required
+               class="w-full px-4 py-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input type="email" [(ngModel)]="form.email" name="email" required
+               class="w-full px-4 py-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Телефон</label>
+        <input type="tel" [(ngModel)]="form.phone_number" name="phone_number" required
+               class="w-full px-4 py-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="flex justify-between items-center mb-6">
+        <button type="submit" [disabled]="loading || !editForm.form.valid"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+          {{ loading ? 'Сохранение...' : 'Сохранить' }}
+        </button>
+
+        <button type="button" (click)="openChangePasswordModal()"
+                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500">
+          Изменить пароль
+        </button>
+      </div>
+
+      <div *ngIf="message" class="text-center text-sm text-red-400 mt-2">{{ message }}</div>
+    </form>
+  </div>
+
+  <!-- Модалка смены пароля вставляется в главный шаблон, как отдельный компонент -->
+  <app-change-password-modal></app-change-password-modal>
+</div>
