@@ -3,7 +3,8 @@ import { BehaviorSubject } from 'rxjs';
 
 export type ModalType =
   | 'report'
-  | 'companyRequest';
+  | 'companyRequest'
+  | 'changePasswordModal';
 
 export interface ModalData {
   [key: string]: any;

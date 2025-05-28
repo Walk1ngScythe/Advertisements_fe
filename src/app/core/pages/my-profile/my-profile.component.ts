@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import {BehaviorSubject, Observable} from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { ModalService } from '../../../../shared/model/modal.services';
 
@@ -21,8 +21,9 @@ export class MyProfileComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
-    public modalService: ModalService
+    public modalService: ModalService,
   ) {
     this.currentUser$ = this.authService.currentUser;
   }
@@ -46,6 +47,11 @@ export class MyProfileComponent implements OnInit {
 
   openCompanyRequest() {
     this.modalService.open('companyRequest');
+  }
+
+  editUser() {
+    const myuserId = this.route.snapshot.paramMap.get('id');
+    this.router.navigate(['my-profile/edit/', myuserId]);
   }
 }
 

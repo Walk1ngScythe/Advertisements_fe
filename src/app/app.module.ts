@@ -24,6 +24,8 @@ import {tokenInterceptor} from './core/interceptors/token.interceptor';
 import {SlickCarouselModule} from "ngx-slick-carousel";
 import {CompanyRequestComponent} from '../features/companyRequest.component';
 import { EditAdComponent } from './core/pages/edit-ad/edit-ad.component';
+import { EditUserComponent } from './core/pages/edit-user/edit-user.component';
+import {ChangePasswordModalComponent} from '../features/change-password-modal.component';
 
 register();
 registerLocaleData(localeRu); // Регистрация русской локализации
@@ -50,7 +52,8 @@ registerLocaleData(localeRu); // Регистрация русской лока�
         ReactiveFormsModule,
         AuthModule,
         FormsModule,
-        SlickCarouselModule
+        SlickCarouselModule,
+
     ],
   exports: [
     HeaderComponent

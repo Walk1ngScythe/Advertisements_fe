@@ -68,6 +68,23 @@ export class ApiService {
     return this.client.get(`users/profile/${id}/`).json<any>().then(response => response.results[0]);
   }
 
+  updateUser(userId: number, formData: FormData): Promise<any> {
+    return this.client.patch(`users/edit/${userId}/`, {
+      body: formData,
+    }).json();
+  }
+
+  changePassword(userId: string, oldPassword: string, newPassword: string, newPasswordConfirm: string): Promise<any> {
+    return this.client.post(`users/edit/${userId}/change_password/`, {
+      json: {
+        old_password: oldPassword,
+        new_password: newPassword,
+        new_password_confirm: newPasswordConfirm,
+      }
+    }).json();
+  }
+
+
 
   deleteAdv(idAdDelete: string): Promise<Response> {
     return this.client.delete(`bbs_edit/${idAdDelete}/`);
